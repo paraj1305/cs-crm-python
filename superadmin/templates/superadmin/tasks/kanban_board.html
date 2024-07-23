@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+{% extends "superadmin/base.html" %}
+{% block content %}
+<div class="container my-4">
+    <div class="kanban-controls mb-4">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        <!-- Add Board Form -->
+        <form action="{% url 'superadmin:add_board' %}" method="post" class="d-inline-flex">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-dark">Add Board</button>
+        </form>
+    </div>
+
+    <!-- Add a wrapper with overflow for horizontal scrolling -->
+    <div class="kanban-board row flex-nowrap overflow-auto" style="white-space: nowrap;">
+        {% for board in boards %}
+        <div class="kanban-column col-md-4 mb-4 d-inline-block" data-board-id="{{ board.id }}" style="float: none; display: inline-block; vertical-align: top;">
+            <div class="card h-100" style="max-height: 600px;"> <!-- Set a max-height for the card -->
+                <div class="card-header bg-dark text-white d-flex justify-content-between align-items-center">
+                    <h2 class="h5 mb-0">{{ board.name }}</h2>
+                    <!-- Move board actions to the end -->
+                    <div class="board-actions ml-auto">
+                        <!-- Add Task Button triggers the modal -->
+                        <button type="button" class="btn btn-dark btn-sm" data-toggle="modal" data-target="#createTaskModal">
+                            <i class="fas fa-plus-circle nav-icon"></i> 
+                        </button>
+                       
+                        <a href="{% url 'superadmin:edit_board' board.id %}" class="btn btn-dark btn-sm"><i class="fa-solid fa-pen-to-square"></i></a>
+                        
+                        <form action="{% url 'superadmin:delete_board' board.id %}" method="post" class="d-inline">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-dark btn-sm" onclick="return confirm('Are you sure you want to delete this board?');"><i class="fa-solid fa-trash"></i></button>
+                        </form>
+                    </div>
+                    
+                </div>
+                
+                <div class="card-body overflow-auto" style="max-height: 500px;"> <!-- Enable vertical scrolling within the card body -->
+                    <div class="kanban-tasks" id="board-{{ board.id }}">
+                        {% for task in tasks %}
+                            {% if task.board == board %}
+                            <div class="kanban-task card mb-3 {{ task.status }}" data-task-id="{{ task.id }}" draggable="true">
+                                <div class="task-actions text-end">
+                                    <!-- View Details Button -->
+                                    <a href="{% url 'superadmin:task_detail' task.id %}" class="btn btn-light btn-sm"><i class="fa-solid fa-eye"></i></a>
+                                    <!-- Edit Task Button -->
+                                    <a href="{% url 'superadmin:update_task' task.id %}" class="btn btn-light btn-sm"><i class="fa-solid fa-pen-to-square"></i></a>
+                                    <!-- Delete Task Form -->
+                                    <form action="{% url 'superadmin:task_delete' task.id %}" method="post" class="d-inline">
+                                        {% csrf_token %}
+                                        <button type="submit" class="btn btn-light btn-sm" onclick="return confirm('Are you sure you want to delete this task?');"><i class="fa-solid fa-trash"></i></button>
+                                    </form>
+                                </div>
+                                <div class="card-body">
+                                    <h3 class="h6 card-title">{{ task.title }}</h3>
+                                    <p class="card-text">{{ task.description }}</p>
+                                    <p class="small text-muted">Due: {{ task.due_date }}</p>
+                                    <p class="small text-muted">Priority: {{ task.get_priority_display }}</p>
+                                    <p class="badge bg-secondary">{{ task.get_status_display }}</p>
+                                </div>
+                            </div>
+                            {% endif %}
+                        {% endfor %}
+                        {% if not tasks|length %}
+                            <p class="text-muted">No tasks in this board.</p>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endfor %}
+        {% if not boards|length %}
+            <p class="text-muted">No boards available. Add a new board above.</p>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Modal Structure -->
+<!-- your_template_path.html -->
+
+<div class="modal fade" id="createTaskModal" tabindex="-1" role="dialog" aria-labelledby="createTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 70%;" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-secondary text-white">
+                <h5 class="modal-title" id="createTaskModalLabel">Create Task</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Include your create task form here -->
+                
+    {% block header %}
+    {% include 'superadmin/header.html' %}
+{% endblock header %}
+                {% include 'superadmin/tasks/createtask.html' %}
+                {% block footer %}
+                {% include 'superadmin/footer.html' %}
+                
+            {% endblock footer %}
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+<div class="modal fade" id="updateTaskModal" tabindex="-1" role="dialog" aria-labelledby="updateTaskModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header bg-secondary text-white">
+                <h5 class="modal-title" id="updateTaskModalLabel">Update Task</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <!-- Include your update task form here -->
+                {% include 'superadmin/tasks/createtask.html' %}
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock %}
+
+{% block extra_scripts %}
+<!-- Include Sortable.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Sortable/1.14.0/Sortable.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Function to get the closest drop target
+        const getClosestColumn = (element) => {
+            return element.closest('.kanban-column');
+        };
+
+        // Add event listeners to columns
+        document.querySelectorAll('.kanban-column').forEach(column => {
+            column.addEventListener('dragover', (event) => {
+                event.preventDefault(); // Prevent default to allow drop
+            });
+
+            column.addEventListener('drop', (event) => {
+                event.preventDefault();
+                
+                // Get the task ID from the dataTransfer object
+                const taskId = event.dataTransfer.getData('text/plain');
+                
+                // Find the closest board column to determine the new board ID
+                const newBoardElement = getClosestColumn(event.target);
+                const newBoardId = newBoardElement ? newBoardElement.dataset.boardId : null;
+
+                // Ensure we have the board ID
+                if (!newBoardId) {
+                    console.error('Failed to determine new board ID');
+                    return;
+                }
+
+                console.log(`Task ID: ${taskId}`);
+                console.log(`New Board ID: ${newBoardId}`);
+
+                // Move the task element in the DOM
+                const taskElement = document.querySelector(`.kanban-task[data-task-id='${taskId}']`);
+                newBoardElement.querySelector('.kanban-tasks').appendChild(taskElement);
+
+                // Fetch the CSRF token from the page
+                const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+
+                // Send a POST request to update the task's board
+                fetch(`/superadmin/update_task_board/${taskId}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': csrftoken,
+                    },
+                    body: JSON.stringify({ 'board_id': newBoardId })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        console.log('Task moved successfully');
+                        // Optionally, update the UI to reflect the move
+                    } else {
+                        console.error('Failed to move task:', data.error);
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+
+        // Add event listeners to tasks
+        document.querySelectorAll('.kanban-task').forEach(task => {
+            task.addEventListener('dragstart', (event) => {
+                event.dataTransfer.setData('text/plain', task.dataset.taskId);
+                // Add class to show dragging visual feedback
+                task.classList.add('dragging');
+            });
+
+            task.addEventListener('dragend', (event) => {
+                // Remove dragging class when drag ends
+                task.classList.remove('dragging');
+            });
+        });
+    });
+
+
+//    for pop-up
+ $(document).ready(function () {
+        // Initialize Dropzone (if needed)
+        Dropzone.autoDiscover = false;
+        var myDropzone = new Dropzone("#attachment-dropzone", {
+            url: "{% url 'superadmin:create_task' %}",  // URL to handle file upload
+            paramName: "attachment",  // Name of the parameter that will contain the file
+            maxFilesize: 5,  // Max file size in MB
+            addRemoveLinks: true,  // Add remove links for uploaded files
+            dictDefaultMessage: "Drag and drop files here or click to upload",
+            dictRemoveFile: "Remove",
+            // Optional: Handle success and error events
+            success: function (file, response) {
+                // Handle success
+                console.log(response);
+            },
+            error: function (file, response) {
+                // Handle error
+                console.error(response);
+            }
+        });
+
+        // Handle form submission in the modal
+            $('#createTaskModal').on('submit', 'form', function (e) {
+                e.preventDefault();  // Prevent default form submission
+
+                var formData = $(this).serialize();  // Serialize form data
+
+                // AJAX post request to submit the form data
+                $.ajax({
+                    type: 'POST',
+                    url: $(this).attr('action'),
+                    data: formData,
+                    success: function (response) {
+                        // Optionally, you can handle success actions here
+                        console.log('Task created successfully');
+                        $('#createTaskModal').modal('hide');  // Hide the modal after successful creation
+                        // You might want to reload or update your kanban board here
+                        // Example: window.location.reload();
+                    },
+                    error: function (error) {
+                        console.error('Error creating task:', error);
+                        // Handle error cases if needed
+                    }
+                });
+            });
+
+            // Load update form in modal on click
+        $('.kanban-tasks').on('click', '.btn-update-task', function (event) {
+            event.preventDefault();
+            
+            var taskId = $(this).data('task-id');
+            var taskUrl = '{% url "superadmin:kanban_board" %}';
+
+            $.get(taskUrl, { task_id: taskId }, function (data) {
+                $('#updateTaskModal .modal-body').html(data);
+                $('#updateTaskModal').modal('show');
+            });
+        });
+
+        // Handle form submission in the modal for update
+        $('#updateTaskModal').on('submit', 'form', function (e) {
+            e.preventDefault();  // Prevent default form submission
+
+            var form = $(this);
+            var formData = form.serialize();  // Serialize form data
+            var taskId = form.find('input[name="task_id"]').val();
+            var updateUrl = '{% url "superadmin:kanban_board" %}';
+
+            $.post(updateUrl, formData, function (response) {
+                if (response.success) {
+                    $('#updateTaskModal').modal('hide');  // Hide the modal after successful update
+                    // Optionally, update the UI to reflect the updated task
+                    window.location.reload();  // Reload the page to update the kanban board
+                } else {
+                    // Handle errors (if any)
+                    $('#updateTaskModal .modal-body').html(response.errors);
+                }
+            }).fail(function (xhr) {
+                console.error('Error updating task:', xhr);
+            });
+        });
+    });
+    
+
+
+
+</script>
+{% endblock %}
+
+{% block extra_styles %}
+<style>
+    /* Customize the scrollbar for the kanban columns */
+    .kanban-column .card-body::-webkit-scrollbar {
+        width: 8px;  /* Set the width of the scrollbar */
+    }
+
+    .kanban-column .card-body {
+        scrollbar-color: rgba(0, 0, 0, 0.2) rgba(255, 255, 255, 0.1); /* For Firefox */
+        scrollbar-width: thin;  /* For Firefox to make the scrollbar thinner */
+    }
+</style>
+{% endblock %}

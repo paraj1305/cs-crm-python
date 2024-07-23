@@ -1,0 +1,139 @@
+{% extends "employee/base.html" %}
+{% load custom_filters %}
+{% block content %}
+<div class="container mt-5">
+    <div class="card">
+        {% if messages %}
+        {% for message in messages %}
+        <div class="alert alert-warning">{{ message }}</div>
+        {% endfor %}
+        {% endif %}
+        <div class="card-header">
+            <h1 class="card-title">Project Details</h1>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <th>Project Title</th>
+                                <td>{{ project.project_title }}</td>
+                            </tr>
+                            <tr>
+                                <th>Client Name</th>
+                                <td>{{ project.client.name }}</td>
+                            </tr>
+                            <tr>
+                                <th>Start Date</th>
+                                <td>{{ project.start_date }}</td>
+                            </tr>
+                            <tr>
+                                <th>Employees</th>
+                                <td>
+                                    {% if project.employees.all %}
+                                    <ul class="list-unstyled mb-0">
+                                        {% for employee in project.employees.all %}
+                                        <li>{{ employee.first_name }} {{ employee.last_name }}</li>
+                                        {% endfor %}
+                                    </ul>
+                                    {% else %}
+                                    No employees assigned to this project.
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <th>Cost</th>
+                                <td>{{ project.project_cost }} $</td>
+                            </tr>
+                            <tr>
+                                <th>Status</th>
+                                <td>
+                                    {% if project.status == 'inprogress' %}
+                                        <span class="badge badge-warning">{{ project.get_status_display }}</span>
+                                    {% else %}
+                                        <span class="badge badge-success">{{ project.get_status_display }}</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            <tr>
+                                <th>Deadline</th>
+                                <td>{{ project.deadline }}</td>
+                            </tr>
+                            <tr>
+                                <th>Priority</th>
+                                <td>
+                                    {% if project.priority == 'medium' %}
+                                        <span class="badge badge-warning">{{ project.get_priority_display }}</span>
+                                    {% elif project.priority == 'low' %}
+                                        <span class="badge badge-success">{{ project.get_priority_display }}</span>
+                                    {% else %}
+                                        <span class="badge badge-danger">{{ project.get_priority_display }}</span>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-12">
+                    <table class="table table-striped">
+                        <tbody>
+                            <th colspan="2">Documents</th>
+                            <td>
+                                {% if project.files.exists %}
+                                    <ul>
+                                        {% for file in project.files.all %}
+                                            <li>
+                                                <a href="{{ file.file.url }}" target="_blank">{{ file.file.name }}</a>
+                                            </li>
+                                        {% endfor %}
+                                    </ul>
+                                {% else %}
+                                    <p>No documents available.</p>
+                                {% endif %}
+                            </td>
+                            
+                            <tr>
+
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+
+            <table class="table table-striped">
+                <thead class="bg-dark">
+                    <tr>
+                        <th>Task</th>
+                        <th>Hours</th>
+                        <th>Cost</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for cr in change_requests %}
+                    <tr>
+                        <td>{{ cr.task }}</td>
+                        <td>{{ cr.hours }}</td>
+                        <td>{{ cr.cost }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="3">No change requests available.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

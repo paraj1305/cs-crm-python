@@ -1,0 +1,246 @@
+{% extends 'employee/base.html' %}
+<body class="hold-transition light-mode sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+  {% load static %}
+  <div class="wrapper">
+
+    <!-- Preloader -->
+    <div class="preloader flex-column justify-content-center align-items-center">
+      <img class="animation__wobble" src="dist/img/AdminLTELogo.png" alt="AdminLTELogo" height="60" width="60">
+    </div>
+    {% if messages %}
+    <div id="message-container">
+        {% for message in messages %}
+            <div class="alert alert-success">{{ message }}</div>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <div class="content-wrapper">
+      {% block content %}
+
+      <section class="content">
+        <div class="container-fluid">
+          <!-- Info boxes -->
+          <div class="row mt-3">
+            <div class="col-12 col-sm-6 col-md-3">
+              <div class="info-box">
+                <span class="info-box-icon bg-info elevation-1"><i class="fas fa-user-tie"></i></span>
+                <div class="info-box-content">
+                  <span class="info-box-text">Clients</span>
+                  <span class="info-box-number">{{ client_count }}</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="col-12 col-sm-6 col-md-3">
+              <div class="info-box mb-3">
+                <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-users"></i></span>
+                <div class="info-box-content">
+                  <span class="info-box-text">Employees</span>
+                  <span class="info-box-number">{{ employee_count }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 col-sm-6 col-md-3">
+              <div class="info-box mb-3">
+                <span class="info-box-icon bg-success elevation-1"><i class="fas fa-project-diagram"></i></span>
+                <div class="info-box-content">
+                  <span class="info-box-text">Project</span>
+                  <span class="info-box-number">{{ project_count }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 col-sm-6 col-md-3">
+              <div class="info-box mb-3">
+                <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-tasks"></i></i></span>
+                <div class="info-box-content">
+                  <span class="info-box-text">Tasks</span>
+                  <span class="info-box-number">{{ task_count }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div><!--/. container-fluid -->
+
+
+        <!-- Task and Project Tables -->
+        <div class="row">
+          <!-- Task Table -->
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-header bg-dark text-white">
+                <h3 class="card-title">Tasks</h3>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-striped">
+                    <thead class="bg-light text-white">
+                      <tr>
+                        <th>Title</th>
+                        <th>Project</th>
+                        <th>Priority</th>
+                        <th>Due Date</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for task in tasks|slice:":3" %}
+                      <tr>
+                        <td>{{ task.title }}</td>
+                        <td>{{ task.project }}</td>
+                        <td>
+                          {% if task.priority == 'medium' %}
+                          <span class="badge badge-warning">{{ task.get_priority_display }}</span>
+                          {% elif task.priority == 'low' %}
+                          <span class="badge badge-success">{{ task.get_priority_display }}</span>
+                          {% else %}
+                          <span class="badge badge-danger">{{ task.get_priority_display }}</span>
+                          {% endif %}
+                        </td>
+                        <td>{{ task.due_date|date:"d/m/Y" }}</td>
+                      </tr>
+                      {% empty %}
+                      <tr>
+                        <td colspan="5">No tasks assigned to you.</td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Project Table -->
+          <div class="col-md-6">
+            <div class="card">
+              <div class="card-header bg-dark text-white">
+                <h3 class="card-title">Projects</h3>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-striped">
+                    <thead class="bg-light text-white">
+                      <tr>
+                        <th>Project Title</th>
+                        <th>Client Name</th>
+                        <th>Priority</th>
+                        <th>Deadline</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {% for project in projects|slice:":3" %}
+                      <tr>
+                        <td>{{ project.project_title }}</td>
+                        <td>{{ project.client.name }}</td>
+                        <td>
+                          {% if project.priority == 'medium' %}
+                          <span class="badge badge-warning">{{ project.get_priority_display }}</span>
+                          {% elif project.priority == 'low' %}
+                          <span class="badge badge-success">{{ project.get_priority_display }}</span>
+                          {% else %}
+                          <span class="badge badge-danger">{{ project.get_priority_display }}</span>
+                          {% endif %}
+                        </td>
+                        <td>{{ project.deadline|date:"d/m/Y" }}</td>
+                      </tr>
+                      {% empty %}
+                      <tr>
+                        <td colspan="6">No projects found matching your search.</td>
+                      </tr>
+                      {% endfor %}
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Leave Requests Section -->
+      <div class="container mt-2">
+        <div class="card">
+          <div class="card-body">
+            <div class="row">
+              <div class="col-md-4">
+                <div class="info-box">
+                  <span class="info-box-icon bg-info"><i class="fas fa-calendar-alt nav-icon"></i></span>
+                  <div class="info-box-content bg-light">
+                    <span class="info-box-text">Total Leaves</span>
+                    <span class="info-box-number">{{ total_leaves }}</span>
+                  </div>
+                </div>
+              </div>
+      
+              <div class="col-md-4">
+                <div class="info-box">
+                  <span class="info-box-icon bg-warning"><i class="fas fa-calendar-check"></i></span>
+                  <div class="info-box-content bg-light">
+                    <span class="info-box-text">Used Leaves</span>
+                    <span class="info-box-number">{{ used_leaves }}</span>
+                  </div>
+                </div>
+              </div>
+      
+              <div class="col-md-4">
+                <div class="info-box">
+                  <span class="info-box-icon bg-success"><i class="fas fa-calendar-times"></i></span>
+                  <div class="info-box-content bg-light">
+                    <span class="info-box-text">Remaining Leaves</span>
+                    <span class="info-box-number">{{ remaining_leaves }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+      
+            <!-- Leave Requests Table -->
+            <div class="table-responsive">
+              <table class="table table-bordered table-striped">
+                <thead class="bg-dark text-white">
+                  <tr>
+                    <th scope="col">Leave Period</th>
+                    <th scope="col">Reason</th>
+                    <th scope="col">Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {% for leave in leaves|slice:":3" %}
+                  <tr>
+                    <td>{{ leave.start_date|date:"d/m/Y" }} to {{ leave.end_date|date:"d/m/Y" }}</td>
+                    <td>{{ leave.leave_reason }}</td>
+                    <td>
+                      {% if leave.status == 'approved' %}
+                      <span class="badge badge-success">{{ leave.status }}</span>
+                      {% elif leave.status == 'pending' %}
+                      <span class="badge badge-warning">{{ leave.status }}</span>
+                      {% else %}
+                      <span class="badge badge-danger">{{ leave.status }}</span>
+                      {% endif %}
+                    </td>
+                  </tr>
+                  {% empty %}
+                  <tr>
+                    <td colspan="3" class="text-center">No leave requests yet.</td>
+                  </tr>
+                  {% endfor %}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+
+      {% endblock content %}
+    </div>
+
+    <footer class="main-footer">
+      <strong>Copyright &copy; 2015-2024 <a href="https://coderscotch.com">coderscotch.com</a>.</strong>
+      All rights reserved.
+      <div class="float-right d-none d-sm-inline-block">
+        <b>Version</b> 3.1.0
+      </div>
+    </footer>
+  </div>
+</body>

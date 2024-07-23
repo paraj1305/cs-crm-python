@@ -1,0 +1,204 @@
+<aside class="main-sidebar sidebar-dark-primary elevation-4 d-flex flex-column position-fixed">
+  <!-- Brand Logo -->
+  <a href="{% url 'superadmin:admin_profile' %}" class="brand-link">
+    {% load static %}
+    {% if logo %}
+        <img src="{{ logo }}" alt="logo" class="brand-image rounded-circle elevation-3" style="width: 50px; height: 50px; object-fit: cover; opacity: .8">
+    {% else %}
+        <img src="{% static 'myapp/img/AdminLTELogo.png' %}" alt="Default Logo" class="brand-image rounded-circle elevation-3" style="width: 50px; height: 50px; object-fit: cover; opacity: .8">
+    {% endif %}
+    <span class="brand-text font-weight-light">{{ company_name }}</span>
+</a>
+
+  <!-- Sidebar Menu -->
+  <nav class="mt-2">
+    <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu" data-accordion="false">
+      <!-- Add icons to the links using the .nav-icon class
+           with font-awesome or any other icon font library -->
+      <li class="nav-item">
+        <a href="#" class="nav-link ">
+          <i class="nav-icon fas fa-user-tie"></i>
+          <p>
+            Clients
+            <i class="fas fa-angle-left right"></i>
+          </p>
+        </a>
+        <ul class="nav nav-treeview">
+          <li class="nav-item">
+            <a href="{% url 'superadmin:client_list' %}" class="nav-link">
+              <i class="fas fa-list nav-icon"></i>
+              <p>Clients</p>
+            </a>
+          </li>
+        </ul>
+        <ul class="nav nav-treeview">
+          <li class="nav-item">
+            <a href="{% url 'superadmin:client_create' %}" class="nav-link">
+              <i class="fas fa-plus-circle nav-icon"></i>
+              <p>Create Client</p>
+            </a>
+          </li>
+        </ul>
+
+      </li>
+      <li class="nav-item">
+        <a href="#" class="nav-link ">
+          <i class="nav-icon fas fa-project-diagram"></i>
+          <p>
+             Projects
+            <i class="fas fa-angle-left right"></i>
+          </p>
+        </a>
+        <ul class="nav nav-treeview">
+          <li class="nav-item">
+            <a href="{% url 'superadmin:project_list' %}" class="nav-link">
+              <i class="fas fa-list nav-icon"></i>
+              <p>Projects</p>
+            </a>
+          </li>
+        </ul>
+        <ul class="nav nav-treeview">
+          <li class="nav-item">
+            <a href="{% url 'superadmin:project_create' %}" class="nav-link">
+              <i class="fas fa-plus-circle nav-icon"></i>
+              <p>Create Projects</p>
+            </a>
+          </li>
+        </ul>
+        
+      </li>
+      <li class="nav-item">
+        <a href="#" class="nav-link ">
+          <i class="nav-icon fas fa-users"></i> 
+          <p>
+            Employees
+            <i class="fas fa-angle-left right"></i>
+          
+          </p>
+        </a>
+        <ul class="nav nav-treeview">
+          <li class="nav-item">
+            <a href="{% url 'superadmin:employee_list' %}" class="nav-link">
+              <i class="fas fa-list nav-icon"></i>
+              <p>Employees</p>
+            </a>
+        </ul>
+        <ul class="nav nav-treeview">
+          <li class="nav-item">
+            <a href="{% url 'superadmin:employee_create' %}" class="nav-link">
+              <i class="fas fa-plus-circle nav-icon"></i>
+              <p>Create Employee</p>
+            </a>
+          </li>
+        </ul>
+      </li>
+
+      <li class="nav-item">
+        <a href="#" class="nav-link ">
+          <i class="nav-icon fas fa-tasks"></i> 
+          <p>
+            Tasks
+            <i class="fas fa-angle-left right"></i>
+            
+          </p>
+        </a>
+        <ul class="nav nav-treeview">
+          <li class="nav-item">
+            <a href="{% url 'superadmin:kanban_board' %}" class="nav-link">
+              <i class="fas fa-list nav-icon"></i>
+              <p>Tasks</p>
+            </a>
+        </ul>
+      
+      </li>
+      <li class="nav-item">
+        <a href="#" class="nav-link ">
+          <i class="nav-icon fas fa-address-book"></i> 
+          <p>
+            Leads
+            <i class="fas fa-angle-left right"></i>
+            
+          </p>
+        </a>
+        <ul class="nav nav-treeview">
+          <li class="nav-item">
+            <a href="{% url 'superadmin:lead_list' %}" class="nav-link">
+              <i class="fas fa-list nav-icon"></i>
+              <p>Leads</p>
+            </a>
+        </ul>
+        <ul class="nav nav-treeview">
+          <li class="nav-item">
+            <a href="{% url 'superadmin:lead_create' %}" class="nav-link">
+              <i class="fas fa-plus-circle nav-icon"></i>
+              <p>Create Lead</p>
+            </a>
+          </li>
+        </ul>
+      </li>
+      <li class="nav-item">
+        <a href="#" class="nav-link">
+          <i class="fas fa-calendar-alt nav-icon"></i>  <!-- Main Leaves Icon -->
+            <p>
+                Leaves
+                <i class="fas fa-angle-left right"></i> <!-- Dropdown arrow -->
+            </p>
+        </a>
+        <ul class="nav nav-treeview">
+            <!-- Apply for Leave -->
+            <li class="nav-item">
+                <a href="{% url 'superadmin:leave_list' %}" class="nav-link">
+                    <i class="fas fa-calendar-plus nav-icon"></i> <!-- Apply for Leave Icon -->
+                    <p>Apply for Leave</p>
+                </a>
+            </li>
+        </ul>
+    </li>
+
+    <li class="nav-item">
+      <a href="#" class="nav-link">
+        <i class="fa-solid fa-receipt nav-icon"></i>  <!-- Main Leaves Icon -->
+          <p>
+              Invoice
+              <i class="fas fa-angle-left right"></i> <!-- Dropdown arrow -->
+          </p>
+      </a>
+      <ul class="nav nav-treeview">
+          <!-- Apply for Leave -->
+          <li class="nav-item">
+            <a href="{% url 'superadmin:invoice_list' %}" class="nav-link">
+              <i class="fas fa-list nav-icon"></i><!-- Apply for Leave Icon -->
+                <p>Invoices</p>
+            </a>
+        </li>
+          <li class="nav-item">
+              <a href="{% url 'superadmin:invoice_create' %}" class="nav-link">
+                  <i class="fas fa-calendar-plus nav-icon"></i> <!-- Apply for Leave Icon -->
+                  <p>Create Invoice</p>
+              </a>
+          </li>
+         
+         
+          
+      </ul>
+  </li>
+    
+    </ul>
+
+
+   
+  </nav>
+ <!-- Spacer to push logout button to bottom -->
+ 
+ 
+ <div class="flex-grow-1"></div>
+ <!-- Logout Form -->
+ <div class="card-footer">
+  <a href="{% url 'superadmin:logout' %}" class="btn btn-light btn-block"> <i
+    class="fas fa-sign-out-alt mr-2"></i>Logout</a>
+ </div>
+  
+  
+
+  </div>
+</aside>
