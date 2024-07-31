@@ -1,0 +1,81 @@
+<!-- create_superadmin.html -->
+{% extends 'superadmin/base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h3 class="card-title text-center">{{ form.instance.pk|yesno:"Update Superadmin,Create Superadmin" }}</h3>
+                </div>
+
+                {% if messages %}
+                <div class="card-body">
+                    {% for message in messages %}
+                    <div class="alert alert-warning">{{ message }}</div>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="id_email">Email:</label>
+                            {{ form.email|add_class:"form-control" }}
+                            {{ form.email.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_company_name">Company Name:</label>
+                            {{ form.company_name|add_class:"form-control" }}
+                            {{ form.company_name.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_bank">Bank:</label>
+                            {{ form.bank|add_class:"form-control" }}
+                            {{ form.bank.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_bank_no">Bank Number:</label>
+                            {{ form.bank_no|add_class:"form-control" }}
+                            {{ form.bank_no.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_SWIFT_CODE">SWIFT Code:</label>
+                            {{ form.SWIFT_CODE|add_class:"form-control" }}
+                            {{ form.SWIFT_CODE.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_IFSC_CODE">IFSC Code:</label>
+                            {{ form.IFSC_CODE|add_class:"form-control" }}
+                            {{ form.IFSC_CODE.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_logo">Logo:</label>
+                            {{ form.logo|add_class:"form-control-file" }}
+                            {{ form.logo.errors }}
+                        </div>
+                        <div class="form-group">
+                            <label for="id_website">Website:</label>
+                            {{ form.website|add_class:"form-control" }}
+                            {{ form.website.errors }}
+                        </div>
+                    </div>
+                    <div class="card-footer text-right">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                        <a href="{% url 'superadmin:home' %}" class="btn btn-secondary">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // Optionally, you can add any custom scripts here if needed
+</script>
+{% endblock extra_scripts %}

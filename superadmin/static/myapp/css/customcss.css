@@ -1,0 +1,147 @@
+body {
+    padding-top: 56px; /* Height of your fixed navbar */
+  }
+
+
+.upload-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #f9f9f9;
+    border: 2px dashed #007bff;
+    border-radius: 10px;
+    padding: 10px;
+    width: 100%;
+    text-align: center;
+    transition: background-color 0.3s ease;
+    cursor: pointer;
+}
+
+.i1{
+    padding: 10px;
+}
+
+.upload-container:hover {
+    background-color: #e9ecef;
+}
+
+.upload-container p {
+    margin: 0;
+    font-size: 14px;
+    color: #6c757d;
+}
+
+
+.upload-container button:hover {
+    background-color: #0056b3;
+}
+
+.file-list {
+    margin-top: 20px;
+    width: 100%;
+}
+
+.file-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+    background-color: #ffffff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    margin-bottom: 10px;
+    transition: background-color 0.3s ease;
+}
+
+.file-item:hover {
+    background-color: #f8f9fa;
+}
+
+.file-item .file-name {
+    flex-grow: 1;
+    margin-left: 10px;
+    font-size: 16px;
+    color: #495057;
+}
+
+.file-item .remove-file {
+    cursor: pointer;
+    color: red;
+    font-size: 20px;
+}
+
+/* project form dropdown box for employee selection */
+/* General form control styling */
+.form-control-sm {
+    padding: .25rem .5rem;
+    font-size: .875rem;
+    line-height: 1.5;
+    border-radius: .2rem;
+}
+
+/* Select2 specific styling */
+.select2-container .select2-selection--multiple {
+            height: auto;
+            min-height: calc(1.8125rem + 2px);
+            border: 1px solid #ced4da;
+            border-radius: 0.2rem;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice {
+            background-color: #007bff;
+            border: 1px solid #007bff;
+            border-radius: 0.2rem;
+            color: #fff;
+            padding: 0.25rem 0.5rem;
+            font-size: 0.875rem;
+            margin-top: 0.25rem;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove {
+            color: #fff;
+            margin-right: 0.25rem;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover {
+            color: #ff0000;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-search--inline .select2-search__field {
+            font-size: 0.875rem;
+        }
+
+        .select2-container--default .select2-selection--multiple .select2-selection__rendered {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+/* kanbon_board */
+
+.kanban-task {
+    margin: 10px 0;
+    padding: 10px;
+    
+    background-color: #f9f9f9;
+}
+
+.kanban-task.unassigned {
+    background-color: #ffdddd;
+}
+
+.kanban-task.todo {
+    background-color: #ffeb99;
+}
+
+.kanban-task.inprogress {
+    background-color: #d1ecf1;
+}
+
+.kanban-task.inreview {
+    background-color: #fff3cd;
+}
+
+.kanban-task.completed {
+    background-color: #d4edda;
+}

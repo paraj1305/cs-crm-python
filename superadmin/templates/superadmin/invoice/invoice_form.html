@@ -1,0 +1,232 @@
+{% extends 'superadmin/base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+
+{% if messages %}
+<div id="message-container">
+    {% for message in messages %}
+    <div class="alert alert-warning">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="container mt-5">
+    <div class="card mx-auto" style="max-width: 600px;">
+        <div class="card-header">
+            <h5 class="mb-0">{{ form.instance.pk|yesno:"Edit Invoice,Create Invoice" }}</h5>
+        </div>
+        <div class="card-body">
+            <form id="invoiceForm" method="post" action="{% if form.instance.pk %}{% url 'superadmin:invoice_edit' form.instance.pk %}{% else %}{% url 'superadmin:invoice_create' %}{% endif %}">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="form-group col-md-12">
+                        <label for="{{ form.client.id_for_label }}">Client</label>
+                        {{ form.client|add_class:"form-control form-control-sm" }}
+                        <div class="invalid-feedback" id="client-errors">{{ form.client.errors }}</div>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label for="{{ form.invoice_date.id_for_label }}">Invoice Date</label>
+                        {{ form.invoice_date|add_class:"form-control form-control-sm" }}
+                        <div class="invalid-feedback" id="invoice_date-errors">{{ form.invoice_date.errors }}</div>
+                    </div>
+                    <div class="form-group col-md-12">
+                        <label for="{{ form.payment_status.id_for_label }}">Payment Status</label>
+                        {{ form.payment_status|add_class:"form-control form-control-sm" }}
+                        <div class="invalid-feedback" id="payment_status-errors">{{ form.payment_status.errors }}</div>
+                    </div>
+                </div>
+
+                <h5 class="mt-4">Invoice Items</h5>
+                <div class="table-responsive mb-3">
+                    <table class="table table-sm table-bordered">
+                        <thead class="thead-light">
+                            <tr>
+                                <th>Title</th>
+                                <th>Rate</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="itemsContainer">
+                            <tr id="noItemsRow">
+                                <td colspan="3" class="text-center">No items added yet.</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Subtotal Display -->
+                <div class="form-group text-right">
+                    <strong>Subtotal:</strong> $<span id="subtotal">0.00</span>
+                </div>
+
+                <!-- Tax Percentage Input Field -->
+                <div class="form-group text-right">
+                    <strong>Tax Percentage %:</strong> 
+                    <input type="number" id="taxPercentageInput" class="form-control d-inline-block" style="width: 80px;" step="0.01" value="{{ form.tax_percentage.value|default_if_none:0 }}">
+                    <div class="invalid-feedback" id="tax_percentage-errors">{{ form.tax_percentage.errors }}</div>
+                </div>
+
+                <!-- Adjusted Total Display -->
+                <div class="form-group text-right">
+                    <strong>Adjusted Total:</strong> $<span id="adjustedTotal">0.00</span>
+                </div>
+
+                <div class="form-group d-flex justify-content-between">
+                    <button type="button" id="addItemButton" class="btn btn-primary">Add Item</button>
+                    <input type="submit" value="Save Invoice" class="btn btn-success btn-sm">
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal for adding invoice item -->
+    <div class="modal fade" id="itemModal" tabindex="-1" role="dialog" aria-labelledby="itemModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-sm" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h6 class="modal-title" id="itemModalLabel">Add Item</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form id="itemForm">
+                        <div class="form-group">
+                            <label for="id_title" class="small">Title</label>
+                            <input type="text" name="title" id="id_title" class="form-control form-control-sm" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="id_rate" class="small">Rate</label>
+                            <input type="number" name="rate" id="id_rate" class="form-control form-control-sm" step="0.01" required>
+                        </div>
+
+                        <!-- Flex container for buttons -->
+                        <div class="form-group d-flex justify-content-between">
+                            <button type="submit" class="btn btn-primary btn-sm">Add</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extra_scripts %}
+<script>
+    $(document).ready(function() {
+        var items = [];
+        var $itemsContainer = $('#itemsContainer');
+        var $noItemsRow = $('#noItemsRow');
+        var $subtotal = $('#subtotal');
+        var $adjustedTotal = $('#adjustedTotal');
+        var $taxInput = $('#taxPercentageInput');
+
+        $('#addItemButton').on('click', function() {
+            $('#itemModal').modal('show');
+        });
+
+        $('#itemForm').on('submit', function(e) {
+            e.preventDefault();
+            var title = $('#id_title').val();
+            var rate = parseFloat($('#id_rate').val());
+
+            var item = {
+                title: title,
+                rate: rate
+            };
+
+            items.push(item);
+
+            if (items.length === 1) {
+                $noItemsRow.hide();
+            }
+
+            $itemsContainer.append(
+                `<tr class="item">
+                    <td>${item.title}</td>
+                    <td>$${item.rate.toFixed(2)}</td>
+                    <td><button type="button" class="btn btn-danger btn-sm remove-item">Remove</button></td>
+                </tr>`
+            );
+
+            $('#itemModal').modal('hide');
+            $('#itemForm')[0].reset();
+            updateSubtotal();
+            updateAdjustedTotal();
+        });
+
+        $itemsContainer.on('click', '.remove-item', function() {
+            var index = $(this).closest('tr').index() - 1;
+            items.splice(index, 1);
+            $(this).closest('tr').remove();
+
+            if (items.length === 0) {
+                $noItemsRow.show();
+            }
+            updateSubtotal();
+            updateAdjustedTotal();
+        });
+
+        $taxInput.on('input', function() {
+            updateAdjustedTotal();
+        });
+
+        function updateSubtotal() {
+            var subtotal = items.reduce(function(acc, item) {
+                return acc + item.rate;
+            }, 0);
+            $subtotal.text(subtotal.toFixed(2));
+        }
+
+        function updateAdjustedTotal() {
+            var subtotal = parseFloat($subtotal.text());
+            var taxPercentage = parseFloat($taxInput.val()) || 0;
+            var adjustedTotal = subtotal + (subtotal * taxPercentage / 100);
+            $adjustedTotal.text(adjustedTotal.toFixed(2));
+        }
+
+        $('#invoiceForm').on('submit', function(e) {
+            e.preventDefault();
+            var $form = $(this);
+            var formData = $form.serializeArray();
+
+            items.forEach(function(item, index) {
+                formData.push({ name: `items[${index}][title]`, value: item.title });
+                formData.push({ name: `items[${index}][rate]`, value: item.rate });
+            });
+
+            formData.push({ name: 'tax_percentage', value: $taxInput.val() });
+
+            $.ajax({
+                url: $form.attr('action'),
+                method: 'POST',
+                data: $.param(formData),
+                success: function(response) {
+                    if (response.success) {
+                        window.location.href = response.redirect_url;
+                    } else {
+                        handleFormErrors(response.errors);
+                    }
+                }
+            });
+        });
+
+        function handleFormErrors(errors) {
+            // Clear previous errors
+            $('.invalid-feedback').text('');
+            $('.is-invalid').removeClass('is-invalid');
+
+            Object.keys(errors).forEach(function(field) {
+                var errorMessages = errors[field].join(' ');
+                var $errorContainer = $('#' + field.replace('_', '-') + '-errors');
+                if ($errorContainer.length) {
+                    $errorContainer.text(errorMessages);
+                    $('#' + field).addClass('is-invalid');
+                }
+            });
+        }
+    });
+</script>
+{% endblock extra_scripts %}

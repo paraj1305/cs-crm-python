@@ -1,0 +1,107 @@
+{% extends "superadmin/base.html" %}
+{% load custom_filters %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        <div class="card-header">
+            <h1 class="card-title">Lead Details</h1>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6">
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <th>Project Name</th>
+                                <td>{{ lead.project_name }}</td>
+                            </tr>
+                            <tr>
+                                <th>Company</th>
+                                <td>{{ lead.company }}</td>
+                            </tr>
+                            <tr>
+                                <th>Email</th>
+                                <td>{{ lead.email }}</td>
+                            </tr>
+                            <tr>
+                                <th>Location</th>
+                                <td>{{ lead.location.name }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <th>Timeline</th>
+                                <td>{{ lead.Timeline }}</td>
+                            </tr>
+                            <tr>
+                                <th>Budget</th>
+                                <td>{{ lead.budget }}</td>
+                            </tr>
+                            <tr>
+                                <th>Phone</th>
+                                <td>{{ lead.phone }}</td>
+                            </tr>
+                            <tr>
+                                <th>Project Type</th>
+                                <td>{{ lead.get_project_type_display }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <!-- Description Field -->
+                <div class="col-12">
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <th>Description</th>
+                                <td>{{ lead.description }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="row">
+                <!-- Documents Field -->
+                <div class="col-12">
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <th>Documents</th>
+                                <td>
+                                    {% if lead.files.exists %}
+                                        <ul>
+                                            {% for file in lead.files.all %}
+                                                <li>
+                                                    <a href="{{ file.file.url }}" target="_blank">{{ file.file.name }}</a>
+                                                </li>
+                                            {% endfor %}
+                                        </ul>
+                                    {% else %}
+                                        <p>No documents available.</p>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        <div class="card-footer">
+            <a href="{% url 'superadmin:lead_update' lead.pk %}" class="btn btn-primary">Update Lead</a>
+            <a href="{% url 'superadmin:lead_list' %}" class="btn btn-secondary">Back to Leads</a>
+        </div>
+    </div>
+</div>
+{% endblock %}
