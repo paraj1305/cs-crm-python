@@ -100,10 +100,10 @@
                                 {{ form.description.errors }}
                             </div>
 
-                            <!-- <div class="form-group">
-                                <label for="dropzone">Attachment</label>
-                                <div id="dropzone" class="dropzone"></div>
-                            </div> -->
+                            <div class="form-group">
+                                <label for="attachment">Attachment</label>
+                                <input type="file" id="attachment" name="attachment" class="form-control form-control-sm">
+                            </div>
                         </div>
                         <div class="card-footer text-right">
                             <button type="submit" id="submit-button" class="btn btn-primary btn-sm">Submit</button>
@@ -114,76 +114,6 @@
         </div>
     </div>
 
-    <!-- Custom script for Dropzone and form handling -->
-    <script>
-        // Get the CSRF token from the form's hidden input
-        function getCSRFToken() {
-            return document.querySelector('[name=csrfmiddlewaretoken]').value;
-        }
 
-        // Ensure Dropzone is not automatically discovering and processing elements
-        Dropzone.autoDiscover = false;
-
-        var dropzone = new Dropzone("#dropzone", {
-            url: "{% url 'superadmin:upload_task_filess' %}", // URL for uploading images
-            paramName: "file", // The name that will be used to transfer the file
-            maxFilesize: 2, // MB
-            addRemoveLinks: true,
-            dictDefaultMessage: "Drag files here or click to upload",
-            autoProcessQueue: false, // Prevent auto-processing; we'll manually process the queue
-            parallelUploads: 10, // Number of files to process simultaneously
-            headers: {
-                "X-CSRFToken": getCSRFToken() // Add CSRF token to headers
-            },
-            init: function() {
-                var myDropzone = this;
-
-                // Handle form submission
-                document.querySelector("#submit-button").addEventListener("click", function(e) {
-                    e.preventDefault();
-                    e.stopPropagation();
-
-                    var TaskForm = document.querySelector("#task-form");
-                    var formData = new FormData(TaskForm);
-
-                    // Submit the form via AJAX
-                    fetch(TaskForm.action, {
-                        method: "POST",
-                        body: formData,
-                        headers: {
-                            "X-Requested-With": "XMLHttpRequest",
-                            "X-CSRFToken": getCSRFToken() // Add CSRF token to headers
-                        },
-                    })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.task_id) {
-                            // Set the client ID on Dropzone for subsequent uploads
-                            myDropzone.options.params = { task_id: data.task_id };
-                            // Process the file upload queue
-                            myDropzone.processQueue();
-                        } else if (data.errors) {
-                            // Handle validation errors from the form submission
-                            console.error(data.errors);
-                        }
-                    })
-                    .catch(error => {
-                        console.error("Error:", error);
-                    });
-                });
-
-                // Handle successful uploads
-                myDropzone.on("queuecomplete", function() {
-                    // Redirect to the client list or show a success message
-                    window.location.href = "{% url 'superadmin:kanban_board' %}";
-                });
-
-                // Handle errors during file upload
-                myDropzone.on("error", function(file, response) {
-                    console.error("Error uploading file:", response);
-                });
-            }
-        });
-    </script>
 </body>
 </html>

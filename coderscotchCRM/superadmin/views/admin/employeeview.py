@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from superadmin.models import Employee,EmployeeImage,SalarySlip,Superadmin
+from superadmin.models import Employee,EmployeeImage,SalarySlip,Superadmin,Task
 from django.contrib import messages
 from .forms import EmployeeForm,SalarySlipForm
 from django.urls import reverse
@@ -114,10 +114,13 @@ def bulk_employee_delete(request):
 def employee_detail(request,employee_id):
     employee=get_object_or_404(Employee,pk=employee_id)
     employee_images=employee.images.all()
+    tasks = Task.objects.filter(employee=employee)
+    
     
     contex={
         'employee':employee,
-        'employee_images':employee_images   
+        'employee_images':employee_images,   
+        'tasks':tasks
     }
     return render(request,'superadmin/employees/employee_details.html',contex)
 

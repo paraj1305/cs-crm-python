@@ -115,9 +115,11 @@ def bulk_client_delete(request):
 def client_detail(request,client_id):
     client=get_object_or_404(Client,pk=client_id)
     client_files=client.images.all()
+    projects = client.projects.all()
     
     contex={
         'client':client,
-        'client_files':client_files
+        'client_files':client_files,
+        'projects':projects
     }   
     return render(request,'superadmin/clients/client_details.html',contex)

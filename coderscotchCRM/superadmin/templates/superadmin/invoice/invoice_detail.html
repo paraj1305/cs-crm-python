@@ -85,6 +85,43 @@
             </div>
             
         </div>
+        <div class="mx-4 mt-4">
+            <h5>Other Invoices for {{ invoice.client }}</h5>
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Invoice ID</th>
+                        <th>Invoice Date</th>
+                        <th>Total Amount</th>
+                        <th>Payment Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for client_invoice in client_invoices %}
+                        <tr>
+                            <td>{{ client_invoice.id }}</td>
+                            <td>{{ client_invoice.invoice_date|date:"d/m/Y" }}</td>
+                            <td>{{ client_invoice.total_amount }}</td>
+                            <td>
+                                {% if invoice.payment_status == 'paid' %}
+                                <span class="badge badge-success">{{ invoice.payment_status }}</span>
+                                {% else %}
+                                <span class="badge badge-danger">{{ invoice.payment_status }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{% url 'superadmin:invoice_detail' client_invoice.id %}" class="btn btn-primary btn-sm">View</a>
+                            </td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center">No other invoices available for this client.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>
 {% endblock %}

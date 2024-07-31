@@ -10,7 +10,7 @@ def employee_tasks(request):
     priority_filter = request.GET.get('priority', '')
     status_filter = request.GET.get('status', '')
 
-    tasks = Task.objects.filter(employee=employee)
+    tasks = Task.objects.filter(employee=employee).order_by('-id')
 
     if search_query:
         tasks = tasks.filter(

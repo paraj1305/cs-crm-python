@@ -9,11 +9,14 @@ from django.views.decorators.csrf import csrf_exempt
 import json
 from django.contrib.auth.decorators import login_required
 
+from django.views.decorators.http import require_POST
+
 
 
 
 @login_required(login_url='/superadmin/login/')
 def create_task(request):
+    
     boards = Board.objects.all()
     selected_board_id = request.GET.get('board_id')
 
@@ -25,6 +28,10 @@ def create_task(request):
 
     if request.method == 'POST':
         if form.is_valid():
+            task = form.save()
+            if 'attachment' in request.FILES:
+                file = request.FILES['attachment']
+                TaskFile.objects.create(task=task, file=file)
             form.save()  # Save the form data to create a new Task object
             
             messages.success(request, 'Task create successfully')
@@ -40,21 +47,23 @@ def create_task(request):
         'selected_board_id': selected_board_id,  # Pass the selected board ID to the template for pre-selection
     })
 
-@login_required(login_url='/superadmin/login/')
-def upload_task_filess(request):
-    if request.method == 'POST':
-        task_id = request.POST.get('task_id')
-        task = get_object_or_404(Task, id=task_id)
+# @csrf_exempt
+# @require_POST
+# def upload_task_files(request):
+#     task_id = request.POST.get('task_id')
+#     if not task_id:
+#         return JsonResponse({'error': 'No task_id provided'}, status=400)
 
-        # Check if there are files in the request
-        if 'file' in request.FILES:
-            # Process each file
-            for file in request.FILES.getlist('file'):
-                TaskFile.objects.create(task=task, file=file)  # Assuming 'file' is the correct field name
-            return JsonResponse({'status': 'success'}, status=200)
-        else:
-            return JsonResponse({'error': 'No files uploaded'}, status=400)
-    return JsonResponse({'error': 'Invalid request method'}, status=400)
+#     try:
+#         task = Task.objects.get(id=task_id)
+#     except Task.DoesNotExist:
+#         return JsonResponse({'error': 'Task not found'}, status=404)
+
+#     files = request.FILES.getlist('file')
+#     for file in files:
+#         TaskFile.objects.create(task=task, file=file)
+
+#     return JsonResponse({'message': 'Files uploaded successfully'})
 
     
 # views.py
@@ -71,6 +80,9 @@ def update_task(request, task_id):
             board_id = request.POST.get('board_id')
             if board_id:
                 updated_task.board = get_object_or_404(Board, pk=board_id)
+            if 'attachment' in request.FILES:
+                file = request.FILES['attachment']
+                TaskFile.objects.create(task=task, file=file)  
             updated_task.save()
             messages.success(request, 'Client created successfully.')
             return redirect('superadmin:kanban_board')

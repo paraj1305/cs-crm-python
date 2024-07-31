@@ -35,6 +35,7 @@ urlpatterns = [
     path('employees/details/<int:employee_id>/', employeeview.employee_detail, name='employee_detail'),
     path('salary-slip/<int:salary_slip_id>/pdf/', employeeview.generate_salary_slip_pdf, name='salary_slip_pdf'),
     path('salary_slip/<int:salary_slip_id>/delete/', employeeview.delete_salary_slip, name='delete_salary_slip'),
+   
 
     
     path('employee/<int:employee_id>/create-slip/', employeeview.check_or_create_salary_slip, name='check_or_create_salary_slip'),
@@ -65,7 +66,7 @@ urlpatterns = [
     path('kanban/edit_board/<int:board_id>/', taskviews.edit_board, name='edit_board'),
     path('kanban/delete_board/<int:board_id>/', taskviews.delete_board, name='delete_board'),
     path('update_task_board/<int:task_id>/', taskviews.update_task_board, name='update_task_board'),
-    path('upload-task-files/', taskviews.upload_task_filess, name='upload_task_filess'),
+    # path('upload-task-files/', taskviews.upload_task_files, name='upload_task_filess'),
     
     #Leads urls
     path('leads/', leadsviews.lead_list, name='lead_list'),

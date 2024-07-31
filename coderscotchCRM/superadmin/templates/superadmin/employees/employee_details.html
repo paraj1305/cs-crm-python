@@ -1,4 +1,4 @@
-<!-- employee/profile.html -->
+<!-- employee_details.html -->
 {% extends "superadmin/base.html" %}
 {% load static %}
 
@@ -20,7 +20,7 @@
                     {% if employee.images.exists %}
                         <img src="{{ employee.images.first.image.url }}" class="img-fluid rounded-circle" alt="Employee Image" style="width: 130px; height: 120px; object-fit: cover;">
                     {% else %}
-                        <img src="{% static 'myapp/img/profile.png' %}" class="img-fluid rounded-circle" alt="Default Image" style="width: 130px; height: 120px; object-fit: cover; ">
+                        <img src="{% static 'myapp/img/profile.png' %}" class="img-fluid rounded-circle" alt="Default Image" style="width: 130px; height: 120px; object-fit: cover;">
                     {% endif %}
                 </div>
                 <div class="col-md-6">
@@ -30,7 +30,6 @@
                                 <th>First Name</th>
                                 <td>{{ employee.first_name }}</td>
                             </tr>
-                            
                             <tr>
                                 <th>Email</th>
                                 <td>{{ employee.email }}</td>
@@ -57,7 +56,6 @@
                                 <th>Joining Date</th>
                                 <td>{{ employee.joining_date|date:"d/m/Y" }}</td>
                             </tr>
-                            
                             <tr>
                                 <th>Salary</th>
                                 <td>{{ employee.salary }}</td>
@@ -66,11 +64,63 @@
                                 <th>Total Leaves</th>
                                 <td>{{ employee.total_leaves }}</td>
                             </tr>
-                            
                         </tbody>
                     </table>
                 </div>
             </div>
+
+            <!-- Display Assigned Tasks -->
+            <div class="mt-4">
+                <h5>Assigned Tasks</h5>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Project</th>
+                            <th>Task Title</th>
+                            <th>Description</th>
+                          
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Due Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for task in tasks %}
+                            <tr>
+                                <td>{{task.project}}</td>
+                                <td>{{ task.title }}</td>
+                                <td>{{ task.description }}</td>
+                                
+                           
+                                <td>
+                                    {% if task.priority == 'medium' %}
+                                        <span class="badge badge-warning">{{ task.get_priority_display }}</span>
+                                    {% elif task.priority == 'low' %}
+                                        <span class="badge badge-success">{{ task.get_priority_display }}</span>
+                                    {% else %}
+                                        <span class="badge badge-danger">{{ task.get_priority_display }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if task.status == 'inprogress' %}
+                                        <span class="badge badge-warning">{{ task.get_status_display }}</span>
+                                    {% else %}
+                                        <span class="badge badge-success">{{ task.get_status_display }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ task.due_date|date:"d/m/Y" }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center">No tasks assigned.</td>
+                            </tr>
+                        {% endfor %}
+
+                   
+                    </tbody>
+                </table>
+            </div>
+
         </div>
     </div>
 </div>

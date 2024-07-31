@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 import logging
 from django.db.models import Q
 from employee.authentication_backends import EmployeeBackend
+from django.core.exceptions import ObjectDoesNotExist
 
 logger = logging.getLogger(__name__)
 
@@ -31,7 +32,11 @@ def employee_login(request):
                 request.session['employee_first_name'] = user.first_name
                 request.session['employee_last_name'] = user.last_name
                 
-              
+                try:
+                    employee_image = EmployeeImage.objects.get(employee=user)
+                    image_url = employee_image.image.url
+                except ObjectDoesNotExist:
+                    image_url = None
 
                 return redirect('employee:home_view')
             else:
@@ -45,6 +50,7 @@ def employee_login(request):
         
     context = {
         'form': form,
+        'image_url': image_url,
        
     } 
     return render(request, 'employee/authentication/form.html',context)

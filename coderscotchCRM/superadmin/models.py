@@ -69,7 +69,7 @@ class Client(models.Model):
     industry = models.CharField(max_length=50, choices=INDUSTRY_CHOICES)
     website = models.URLField()
     since = models.PositiveIntegerField()
-    company = models.CharField(max_length=50, null=True)
+    company = models.CharField(max_length=255, null=True)
     address = models.TextField(null=True)
 
     def __str__(self):
@@ -224,8 +224,8 @@ class Project(models.Model):
     # user = models.OneToOneField(settings.AUTH_USER_MODEL, on_delete=models.CASCADE, related_name='employee')
     # user = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.CASCADE)
     id = models.AutoField(primary_key=True)
-    project_title = models.CharField(max_length=60)
-    client = models.ForeignKey(Client, on_delete=models.CASCADE)
+    project_title = models.CharField(max_length=25)
+    client = models.ForeignKey(Client, related_name='projects',on_delete=models.CASCADE)
     priority = models.CharField(max_length=50, choices=PRIORITY_LEVELS, default="medium")
     status = models.CharField(max_length=50, choices=STATUS_LEVELS, default="inprogress")
     start_date = models.DateField()
@@ -286,7 +286,7 @@ class Task(models.Model):
         ('completed', 'Completed'),
     ]
 
-    title = models.CharField(max_length=60)
+    title = models.CharField(max_length=25)
     project = models.ForeignKey(Project, on_delete=models.CASCADE)
     board = models.ForeignKey(Board, on_delete=models.CASCADE)
     description = models.TextField()
@@ -309,7 +309,7 @@ class TaskFile(models.Model):
 #Leads management model
 class Lead(models.Model): 
     project_name = models.CharField(max_length=50)
-    company = models.CharField(max_length=100, blank=True, null=True)
+    company = models.CharField(max_length=255, blank=True, null=True)
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=25, blank=True, null=True)
     project_type = models.CharField(max_length=50, choices=INDUSTRY_CHOICES)
@@ -319,7 +319,7 @@ class Lead(models.Model):
     # lead_files = models.FileField(upload_to='lead_files/', blank=True, null=True)
     budget = models.CharField(max_length=100)
 
-    def __str__(self):
+    def __str__(self):  
         return f"{self.project_name}"
     
 class LeadFile(models.Model):
@@ -352,7 +352,7 @@ class Invoice(models.Model):
         return f"Invoice #{self.id} for {self.client.name}"
 
     def total_amount(self):
-        return sum(item.rate for item in self.items.all())
+        return sum(item.rate for item in     self.items.all())
     def total_with_tax(self):
         total = self.total_amount()
         tax_amount = (self.tax_percentage / 100) * total
@@ -367,4 +367,3 @@ class InvoiceItem(models.Model):
 
     def __str__(self):
         return self.title
-

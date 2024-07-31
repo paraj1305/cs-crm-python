@@ -48,22 +48,29 @@
                         </div>
                       
                         <div class="row">
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="{{ form.status.id_for_label }}">Status</label>
                                     {{ form.status|add_class:"form-control form-control-sm" }}
                                     {{ form.status.errors }}
                                 </div>
                             </div>
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="{{ form.due_date.id_for_label }}">Due Date</label>
                                     {{ form.due_date|add_class:"form-control form-control-sm" }}
                                     {{ form.due_date.errors }}
                                 </div>
                             </div>
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label for="{{ form.priority.id_for_label }}">priority</label>
+                                    {{ form.priority|add_class:"form-control form-control-sm" }}
+                                    {{ form.priority.errors }}
+                                </div>
+                            </div>
                             
-                            <div class="col-md-4">
+                            <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="{{ form.board.id_for_label }}">Board</label>
                                     <select name="board" id="{{ form.board.id_for_label }}"

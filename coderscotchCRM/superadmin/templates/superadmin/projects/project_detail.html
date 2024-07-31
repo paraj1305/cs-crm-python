@@ -85,6 +85,7 @@
                     </table>
                 </div>
             </div>
+            
             <div class="row">
                 <div class="col-12">
                     <h4>Documents</h4>
@@ -110,6 +111,49 @@
                         <p>No documents available.</p>
                     {% endif %}
                 </div>
+            </div>
+            <div class="mt-4">
+                <h5>Tasks Associated with This Project</h5>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Task Title</th>
+                            <th>Description</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Due Date</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for task in tasks %}
+                            <tr>
+                                <td>{{ task.title }}</td>
+                                <td>{{ task.description }}</td>
+                                <td>
+                                    {% if task.priority == 'medium' %}
+                                        <span class="badge badge-warning">{{ task.get_priority_display }}</span>
+                                    {% elif task.priority == 'low' %}
+                                        <span class="badge badge-success">{{ task.get_priority_display }}</span>
+                                    {% else %}
+                                        <span class="badge badge-danger">{{ task.get_priority_display }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if task.status == 'inprogress' %}
+                                        <span class="badge badge-warning">{{ task.get_status_display }}</span>
+                                    {% else %}
+                                        <span class="badge badge-success">{{ task.get_status_display }}</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ task.due_date|date:"d/m/Y" }}</td>
+                            </tr>
+                        {% empty %}
+                            <tr>
+                                <td colspan="5" class="text-center">No tasks available.</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
             </div>
         </div>
         <div class="card-footer">

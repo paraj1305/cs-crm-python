@@ -4,7 +4,7 @@ from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from superadmin.models import Project, ChangeRequest,ProjectFile
+from superadmin.models import Project, ChangeRequest,ProjectFile,Task
 from .forms import ProjectForm, ChangeRequestForm
 import logging
 from django.http import JsonResponse
@@ -169,10 +169,12 @@ def project_detail(request, project_id):
     project = get_object_or_404(Project, pk=project_id)
     project_files = project.files.all()  # Fetch related project files
     change_requests = project.changerequest_set.all()
+    tasks = Task.objects.filter(project=project)
 
     context = {
         'project': project,
         'project_files': project_files,
-        'change_requests':change_requests
+        'change_requests':change_requests,
+        'tasks':tasks
     }
     return render(request, 'superadmin/projects/project_detail.html', context)

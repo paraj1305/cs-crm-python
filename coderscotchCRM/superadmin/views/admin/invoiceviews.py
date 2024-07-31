@@ -96,13 +96,17 @@ def invoice_detail(request, invoice_id):
     total_rate = invoice.total_amount()
     tax_amount = (invoice.tax_percentage / 100) * total_rate
     adjusted_total = total_rate + tax_amount
+    
+    client_invoices = Invoice.objects.filter(client=invoice.client).exclude(id=invoice_id)
 
+    
     return render(request, 'superadmin/invoice/invoice_detail.html', {
         'invoice': invoice,
         'total_rate': total_rate,
         'tax_percentage': invoice.tax_percentage,
         'tax_amount': tax_amount,
-        'adjusted_total': adjusted_total
+        'adjusted_total': adjusted_total,
+        'client_invoices':client_invoices
     })
 
 
