@@ -1,0 +1,77 @@
+<!-- employee/profile.html -->
+{% extends "superadmin/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        <div class="card-header">
+            <h1 class="card-title">Employee Profile</h1>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <!-- Display Employee Image as Profile Picture -->
+                <div class="col-md-12 text-center mb-4">
+                    {% if employee.images.exists %}
+                        <img src="{{ employee.images.first.image.url }}" class="img-fluid rounded-circle" alt="Employee Image" style="width: 130px; height: 120px; object-fit: cover;">
+                    {% else %}
+                        <img src="{% static 'myapp/img/profile.png' %}" class="img-fluid rounded-circle" alt="Default Image" style="width: 130px; height: 120px; object-fit: cover; ">
+                    {% endif %}
+                </div>
+                <div class="col-md-6">
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <th>First Name</th>
+                                <td>{{ employee.first_name }}</td>
+                            </tr>
+                            
+                            <tr>
+                                <th>Email</th>
+                                <td>{{ employee.email }}</td>
+                            </tr>
+                            <tr>
+                                <th>Phone</th>
+                                <td>{{ employee.phone }}</td>
+                            </tr>
+                            <tr>
+                                <th>Designation</th>
+                                <td>{{ employee.designation }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <th>Last Name</th>
+                                <td>{{ employee.last_name }}</td>
+                            </tr>
+                            <tr>
+                                <th>Joining Date</th>
+                                <td>{{ employee.joining_date|date:"d/m/Y" }}</td>
+                            </tr>
+                            
+                            <tr>
+                                <th>Salary</th>
+                                <td>{{ employee.salary }}</td>
+                            </tr>
+                            <tr>
+                                <th>Total Leaves</th>
+                                <td>{{ employee.total_leaves }}</td>
+                            </tr>
+                            
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

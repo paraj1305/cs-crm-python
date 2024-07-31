@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+{% extends "superadmin/base.html" %}
+{% load static %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="alert alert-success">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+        <div class="card-header">
+            <h1 class="card-title">Client Profile</h1>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <!-- Display Client Image as Profile Picture -->
+                <div class="col-md-12 text-center mb-4">
+                    {% if client.images.exists %}
+                        <img src="{{ client.images.first.image.url }}" class="img-fluid rounded-circle" alt="Client Image" style="width: 130px; height: 120px; object-fit: cover; opacity: .8">
+                    {% else %}
+                        <img src="{% static 'myapp/img/profile.png' %}" class="img-fluid rounded-circle" alt="Default Image" style="width: 130px; height: 120px; object-fit: cover; opacity: .8">
+                    {% endif %}
+                </div>
+                <div class="col-md-6">
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <th>Client Name</th>
+                                <td>{{ client.name }}</td>
+                            </tr>
+                            <tr>
+                                <th>Email</th>
+                                <td>{{ client.email }}</td>
+                            </tr>
+                            <tr>
+                                <th>Phone</th>
+                                <td>{{ client.phone }}</td>
+                            </tr>
+                            <tr>
+                                <th>Location</th>
+                                <td>{{ client.location.name }}</td>
+                            </tr>
+                            <tr>
+                                <th>Industry</th>
+                                <td>{{ client.industry }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="col-md-6">
+                    <table class="table table-striped">
+                        <tbody>
+                            <tr>
+                                <th>Website</th>
+                                <td><a href="{{ client.website }}" target="_blank">{{ client.website }}</a></td>
+                            </tr>
+                            <tr>
+                                <th>Since</th>
+                                <td>{{ client.since }}</td>
+                            </tr>
+                            <tr>
+                                <th>Company</th>
+                                <td>{{ client.company }}</td>
+                            </tr>
+                            <tr>
+                                <th>Industry</th>
+                                <td>{{ client.industry }}</td>
+                            </tr>
+                            <tr>
+                                <th>Address</th>
+                                <td>{{ client.address }}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

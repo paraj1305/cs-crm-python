@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+{% load custom_filters %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Salary Slip Details</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            font-size: medium;
+        }
+       
+     
+     
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+        }
+        th, .total {
+            border-top: 1px solid #ddd;
+            border-bottom: 1px solid #ddd;
+        }
+        th, td {
+            padding: 4px;
+            text-align: left;
+            font-size: medium;
+        }
+        .total {
+            font-weight: bold;
+        }
+        .address-line {
+            margin: 0;
+        }
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-container .company-info {
+            flex: 1;
+            text-align: right;
+        }
+
+        table{
+            margin: 60px;
+        }
+        
+    </style>
+</head>
+<body>
+    <div class="container mt-5">
+        <div class="header">
+            <div class="header-container">
+                <div class="logo">
+                    <img src="C:\Users\Paraj\coderscotchCRM\coderscotchCRM\superadmin\static\myapp\img\logo.png" alt="Coderscotch Logo" style="width: 200px;">
+                </div>
+                
+                
+                <div class="company-info">
+                    <h4>{{ superadmin.company_name }}</h4>
+                    <p>{{ superadmin.address }}</p>
+                    <p>{{ superadmin.email }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="employee-details">
+            <div><strong>Employee Name:</strong> {{ salary_slip.employee.first_name }} {{ salary_slip.employee.last_name }}</div>
+            <p class="card-text"><strong>Slip Date:</strong> {{ salary_slip.month|month_name }}  {{ salary_slip.year }}</p>
+
+            <div><strong>Designation:</strong> {{ salary_slip.employee.designation }}</div>
+        </div>
+        <table>
+            <tr>
+                <th>Description</th>
+                <th class="a">Amount ($)</th>
+            </tr>
+            <tr>
+                <td>Basic Salary</td>
+                <td class="a">{{ salary_slip.employee.salary }}</td>
+            </tr>
+            <tr>
+                <td>Professional Tax</td>
+                <td class="a">{{ salary_slip.professional_tax }}</td>
+            </tr>
+            <tr>
+                <td>TDS</td>
+                <td class="a">{{ salary_slip.TDS }}</td>
+            </tr>
+            <tr>
+                <td>Leave Deduction</td>
+                <td class="a">{{ salary_slip.leave_deduction }}</td>
+            </tr>
+            <tr class="total">
+                <td>Total Salary</td>
+                <td class="a">{{ salary_slip.total_salary }}</td>
+            </tr>
+        </table>
+    </div>
+</body>
+</html>

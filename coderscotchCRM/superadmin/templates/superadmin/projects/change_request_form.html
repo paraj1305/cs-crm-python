@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+{% extends 'superadmin/base.html' %}
+{% load custom_filters %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h3 class="card-title text-center">{{ form.instance.pk|yesno:"Update Change Request,Create Change Request" }}</h3>
+                </div>
+                <form method="post" action="">
+                    {% csrf_token %}
+                    <div class="card-body p-3">
+                        {{ form.non_field_errors }}
+                        <div class="table-responsive">
+                            <table class="table table-borderless">
+                                <tbody>
+                                    <tr>
+                                        <td><label for="{{ form.project.id_for_label }}">Project</label></td>
+                                        <td>
+                                            {{ form.project|add_class:"form-control form-control-sm" }}
+                                            {{ form.project.errors }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><label for="{{ form.task.id_for_label }}">Task</label></td>
+                                        <td>
+                                            {{ form.task|add_class:"form-control form-control-sm" }}
+                                            {{ form.task.errors }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><label for="{{ form.hours.id_for_label }}">Hours</label></td>
+                                        <td>
+                                            {{ form.hours|add_class:"form-control form-control-sm" }}
+                                            {{ form.hours.errors }}
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td><label for="{{ form.hours.id_for_label }}">Rate($)</label></td>
+                                        <td>
+                                            {{ form.cost|add_class:"form-control form-control-sm" }}
+                                            {{ form.cost.errors }}
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    {% if messages %}
+                    <div id="message-container">
+                        {% for message in messages %}
+                        <div class="alert alert-warning">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <div class="card-footer text-right">
+                        <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

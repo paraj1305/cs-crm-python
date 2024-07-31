@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+{% extends 'superadmin/base.html' %}
+{% load custom_filters %}
+{% block content %}
+
+{% if messages %}
+<div id="message-container">
+    {% for message in messages %}
+    <div class="alert alert-success">{{ message }}</div>
+    {% endfor %}
+</div>
+{% endif %}
+
+<div class="container mt-5">
+   
+    
+    <div class="row mb-3">
+        <div class="col">
+            <h5><i class="fas fa-file-invoice"></i> Invoice List</h5>
+        </div>
+        <div class="col text-right">
+            <form id="filter-form" method="get" class="form-inline justify-content-end">
+                <div class="form-group mb-2">
+                    <select class="form-control mr-2" name="payment_status" onchange="this.form.submit()">
+                        <option value="">All</option>
+                        <option value="paid" {% if payment_status == 'paid' %}selected{% endif %}>Paid</option>
+                        <option value="unpaid" {% if payment_status == 'unpaid' %}selected{% endif %}>Unpaid</option>
+                    </select>
+                </div>
+                <div class="form-group mb-2">
+                    <input type="text" class="form-control mr-2" id="search-query" name="search_query" placeholder="Search by Client" >
+                </div>
+                <a href="{% url 'superadmin:invoice_create' %}" class="btn btn-success mb-2">
+                    <i class="fa-solid fa-plus"></i> 
+                </a>
+            </form>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col">
+            <table class="table table-striped">
+                <thead class="thead-dark">
+                    <tr>
+                        <th><i class="fas fa-hashtag"></i> Invoice ID</th>
+                        <th><i class="fas fa-user"></i> Client</th>
+                        <th><i class="fas fa-calendar-alt"></i> Invoice Date</th>
+                        <th>Payment</th>
+                        <th><i class="fas fa-cogs"></i> Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for invoice in invoices %}
+                    <tr>
+                        <td>{{ invoice.id }}</td>
+                        <td>{{ invoice.client.name }}</td>
+                        <td>{{ invoice.invoice_date|date:"d/m/Y" }}</td>
+                        <td>
+                            {% if invoice.payment_status == 'paid' %}
+                            <span class="badge badge-success">{{ invoice.payment_status }}</span>
+                            {% else %}
+                            <span class="badge badge-danger">{{ invoice.payment_status }}</span>
+                            {% endif %}
+                        </td>
+
+                        <td>
+                            <a href="{% url 'superadmin:invoice_edit' invoice.id %}" class="text-primary mr-2" title="Edit">
+                                <i class="fa-solid fa-pen-to-square"></i>
+                            </a>
+                            <a href="{% url 'superadmin:invoice_detail' invoice.id %}" class="text-info mr-2" title="Details">
+                                <i class="fas fa-info-circle"></i>
+                            </a>
+                        </td>
+                        
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center">No invoices found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Live search as you type
+        document.getElementById('search-query').addEventListener('input', function(event) {
+            let searchQuery = event.target.value.trim().toLowerCase();
+            filterInvoices(searchQuery);
+        });
+
+        function filterInvoices(searchQuery) {
+            let rows = document.querySelectorAll('tbody tr'); // Assuming your table body is structured like this
+            rows.forEach(row => {
+                let clientName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+
+                if (clientName.includes(searchQuery)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+        function confirmDelete() {
+            return confirm('Are you sure you want to delete this invoice?');
+        }
+
+        function confirmBulkDelete() {
+            return confirm('Are you sure you want to delete the selected invoices?');
+        }
+    });
+</script>
+{% endblock %}

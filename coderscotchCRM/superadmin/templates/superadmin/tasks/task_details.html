@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+{% extends 'superadmin/base.html' %}
+{% block content %}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h3 class="card-title">{{ task.title }}</h3>
+                </div>
+                <div class="card-body">
+                    <div class="table-responsive">
+                        <table class="table table-striped">
+                            <tbody>
+                                <tr>
+                                    <th style="width: 30%;">Project</th>
+                                    <td>{{ task.project }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Board</th>
+                                    <td>{{ task.board }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Description</th>
+                                    <td>{{ task.description }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Due Date</th>
+                                    <td>{{ task.due_date|date:"d/m/Y" }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Employee</th>
+                                    <td>{{ task.employee }}</td>
+                                </tr>
+                                <tr>
+                                    <th>Priority</th>
+                                    <td> {% if task.priority == 'medium' %}
+                                        <span class="badge badge-warning">{{ task.get_priority_display }}</span>
+                                    {% elif task.priority == 'low' %}
+                                        <span class="badge badge-success">{{ task.get_priority_display }}</span>
+                                    {% else %}
+                                        <span class="badge badge-danger">{{ task.get_priority_display }}</span>
+                                    {% endif %}</td>
+                                </tr>
+                                <tr>
+                                    <th>Status</th>
+                                    <td>
+                                        {% if task.status == 'compalted' %}
+                                            <span class="badge badge-success">{{ task.get_status_display }}</span>
+                                        {% else %}
+                                            <span class="badge badge-warning">{{ task.get_status_display }}</span>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                                {% if task.attachment %}
+                                <tr>
+                                    <th>Attachment</th>
+                                    <td><a href="{{ task.attachment.url }}" target="_blank">{{ task.attachment.name }}</a></td>
+                                </tr>
+                                {% endif %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% endblock %}

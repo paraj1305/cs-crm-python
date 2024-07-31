@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+{% extends 'superadmin/base.html' %}
+{% load custom_filters %}
+{% block content %}
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h3 class="card-title text-center">{{ form_title }} Salary Slip for {{ employee.first_name }} {{ employee.last_name }}</h3>
+                </div>
+
+                {% if messages %}
+                    <div id="message-container" class="m-3">
+                        {% for message in messages %}
+                            <div class="alert alert-warning">{{ message }}</div>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+
+                <form id="salary-slip-form" method="post" enctype="multipart/form-data" action="{{ form_action }}">
+                    {% csrf_token %}
+                    <div class="card-body p-3">
+                        {{ form.non_field_errors }}
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="{{ form.month.id_for_label }}">Month</label>
+                                    {{ form.month|add_class:"form-control form-control-sm" }}
+                                    <div class="text-danger small" id="error-month"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="{{ form.year.id_for_label }}">Year</label>
+                                    {{ form.year|add_class:"form-control form-control-sm" }}
+                                    <div class="text-danger small" id="error-year"></div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="{{ form.professional_tax.id_for_label }}">Professional Tax</label>
+                                    {{ form.professional_tax|add_class:"form-control form-control-sm" }}
+                                    <div class="text-danger small" id="error-professional_tax"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="{{ form.TDS.id_for_label }}">TDS</label>
+                                    {{ form.TDS|add_class:"form-control form-control-sm" }}
+                                    <div class="text-danger small" id="error-TDS"></div>
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="{{ form.leave_deduction.id_for_label }}">Leave Deduction</label>
+                                    {{ form.leave_deduction|add_class:"form-control form-control-sm" }}
+                                    <div class="text-danger small" id="error-leave_deduction"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="card-footer text-right">
+                        <button type="submit" id="submit-button" class="btn btn-primary btn-sm">{{ button_text }}</button>
+                        <a href="{% url 'superadmin:employee_list' %}" class="btn btn-secondary btn-sm">Cancel</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="container mt-3">
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h3 class="card-title text-center">Previous Salary Slips</h3>
+                </div>
+                <div class="card-body p-3">
+                    <table class="table table-striped ">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                           
+                                <th>Professional Tax</th>
+                                <th>TDS</th>
+                                <th>Leave Deduction</th>
+                                <th>Total Salary</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for slip in previous_salary_slips %}
+                                <tr>
+                                    <td>{{ slip.month |month_name   }} {{slip.year}} </td>
+                                   
+                                    <td>{{ slip.professional_tax }}</td>
+                                    <td>{{ slip.TDS }}</td>
+                                    <td>{{ slip.leave_deduction }}</td>
+                                    <td>{{ slip.total_salary }}</td>
+                                    <td>
+                                        <a href="{% url 'superadmin:update_salary_slip' slip.id %}" class="text-primary" title="Update">
+                                            <i class="fas fa-edit"></i>
+                                        </a>
+                                        <a href="{% url 'superadmin:salary_slip_detail' slip.id %}" class="text-info" title="View">
+                                            <i class="fas fa-eye"></i>
+                                        </a>
+                                        <a href="{% url 'superadmin:delete_salary_slip' slip.id %}" class="text-danger" title="Delete" onclick="return confirm('Are you sure you want to delete this salary slip?');">
+                                            <i class="fas fa-trash-alt"></i>
+                                        </a>
+                                    </td>
+                                    
+                                </tr>
+                            {% empty %}
+                                <tr>
+                                    <td colspan="7" class="text-center">No previous salary slips found.</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock content %}

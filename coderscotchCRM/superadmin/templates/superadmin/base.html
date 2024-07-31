@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+    <title>{% block title %}coderscotchCRM{% endblock title %}</title>
+    
+    {% block extra_styles %}
+    <!-- Additional styles can be added here -->
+    {% endblock extra_styles %}
+
+    {% block header %}
+        {% include 'superadmin/header.html' %}
+    {% endblock header %}
+
+    {% block navbar %}
+        {% include 'superadmin/navbar.html' %}
+    {% endblock navbar %}
+
+    {% block sidebar %}
+        {% include 'superadmin/sidebar.html' %}
+    {% endblock sidebar %}
+
+    <div class="content-wrapper">
+        {% block content %}
+        <!-- Main content will be injected here -->
+        {% endblock content %}
+    </div>
+
+    {% block footer %}
+        {% include 'superadmin/footer.html' %}
+        
+    {% endblock footer %}
+
+        {% block extra_scripts %}
+            <!-- Additional scripts can be added here -->
+        {% endblock extra_scripts %}

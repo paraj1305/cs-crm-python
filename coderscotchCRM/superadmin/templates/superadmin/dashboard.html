@@ -1,0 +1,354 @@
+{% extends 'superadmin/base.html' %}
+{% load custom_filters %}
+<body class="hold-transition light-mode sidebar-mini layout-fixed layout-navbar-fixed layout-footer-fixed">
+  {% load static %}
+  <div class="wrapper">
+
+    <!-- Preloader -->
+    <div class="preloader flex-column justify-content-center align-items-center">
+      <img class="animation__wobble" src="{% static 'dist/img/AdminLTELogo.png' %}" alt="AdminLTELogo" height="60" width="60">
+    </div>
+
+    {% if messages %}
+    <div id="message-container">
+      {% for message in messages %}
+      <div class="alert alert-warning">{{ message }}</div>
+      {% endfor %}
+    </div>
+    {% endif %}
+
+    <div class="content-wrapper">
+      {% block content %}
+      <section class="content">
+        <div class="container-fluid">
+          <!-- Info boxes -->
+          <div class="row mt-4">
+            <div class="col-12 col-sm-6 col-md-3">
+              <div class="info-box">
+                <span class="info-box-icon bg-info elevation-1"><i class="fas fa-user-tie"></i></span>
+                <div class="info-box-content">
+                  <span class="info-box-text">Clients</span>
+                  <span class="info-box-number">{{ client_count }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 col-sm-6 col-md-3">
+              <div class="info-box mb-3">
+                <span class="info-box-icon bg-danger elevation-1"><i class="fas fa-users"></i></span>
+                <div class="info-box-content">
+                  <span class="info-box-text">Employees</span>
+                  <span class="info-box-number">{{ employee_count }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 col-sm-6 col-md-3">
+              <div class="info-box mb-3">
+                <span class="info-box-icon bg-success elevation-1"><i class="fas fa-project-diagram"></i></span>
+                <div class="info-box-content">
+                  <span class="info-box-text">Projects</span>
+                  <span class="info-box-number">{{ project_count }}</span>
+                </div>
+              </div>
+            </div>
+
+            <div class="col-12 col-sm-6 col-md-3">
+              <div class="info-box mb-3">
+                <span class="info-box-icon bg-warning elevation-1"><i class="fas fa-tasks"></i></span>
+                <div class="info-box-content">
+                  <span class="info-box-text">Tasks</span>
+                  <span class="info-box-number">{{ task_count }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dashboard Cards -->
+          <div class="row mt-2">
+            <div class="col-md-12">
+              <div class="card">
+                <div class="card-header d-flex align-items-center">
+                  <h5 class="card-title mb-0 mr-auto">Monthly Recap Report</h5>
+                  <div class="d-flex align-items-center mr-3">
+                    <!-- Filter Form -->
+                    <form method="GET" action="." class="form-inline mb-0">
+                      <div class="form-group mb-0 mr-2">
+                          <label for="year" class="sr-only">Year</label>
+                          {{ form.year|add_class:"form-control" }}
+                      </div>
+                      <div class="form-group mb-0 mr-2">
+                          <label for="month" class="sr-only">Month</label>
+                          {{ form.month|add_class:"form-control" }}
+                      </div>
+                      <div class="form-group mb-0 mr-2">
+                          <label for="chart_type" class="sr-only">Chart Type</label>
+                          {{ form.chart_type|add_class:"form-control" }}
+                      </div>
+                     
+                  </form>
+                  </div>
+                  <!-- Card Tools -->
+                  <div class="btn-group">
+                    <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                      <i class="fas fa-minus"></i>
+                    </button>
+                    <button type="button" class="btn btn-tool" data-card-widget="remove">
+                      <i class="fas fa-times"></i>
+                    </button>
+                  </div>
+                </div>
+                
+                <div class="card-body">
+                  <canvas id="monthlyRecapChart" width="400" height="100"></canvas>
+                  <!-- Rest of the card content -->
+                </div>
+                
+                
+                <div class="card-body">
+                  <div class="card-footer">
+                    <div class="row">
+                      <div class="col-sm-3 col-6">
+                        <div class="description-block border-right">
+                          <span class="description-percentage text-success">
+                            <i class="fas fa-caret-up"></i> 0%
+                          </span>
+                          <h5 class="description-header">${{ total_revenue|floatformat:2 }}</h5>
+                          <span class="description-text">TOTAL REVENUE</span>
+                        </div>
+                      </div>
+                      <div class="col-sm-3 col-6">
+                        <div class="description-block border-right">
+                          <span class="description-percentage text-warning">
+                            <i class="fas fa-caret-left"></i> 0%
+                          </span>
+                          <h5 class="description-header">${{ total_cost }}</h5>
+                          <span class="description-text">TOTAL COST</span>
+                        </div>
+                      </div>
+                      <div class="col-sm-3 col-6">
+                        <div class="description-block border-right">
+                          <span class="description-percentage text-success">
+                            <i class="fas fa-caret-up"></i> 0%
+                          </span>
+                          <h5 class="description-header">${{ total_profit|floatformat:2 }}</h5>
+                          <span class="description-text">TOTAL PROFIT</span>
+                        </div>
+                      </div>
+                      <div class="col-sm-3 col-6">
+                        <div class="description-block">
+                          <span class="description-percentage text-danger">
+                            <i class="fas fa-caret-down"></i> 0%
+                          </span>
+                          <h5 class="description-header">$100000</h5>
+                            <span class="description-text"> GOAL COMPLETIONS</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row mt-2">
+            <!-- Projects Near Deadline Section -->
+            <div class="col-md-6 mb-2">
+                <div class="nearest-deadline-projects card">
+                  <div class="card-header d-flex align-items-center" style="background-color: #f8d7da; color:#721c24;">
+                    <h3 class="card-title mb-0">Projects Near Deadline</h3>
+                    <div class="ml-auto">
+                        <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                            <i class="fas fa-minus"></i>
+                        </button>
+                        <button type="button" class="btn btn-tool" data-card-widget="remove">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="card-body">
+                  <table class="table table-borderless">
+                      <tbody>
+                          {% for project in nearest_deadline_projects %}
+                              <tr>
+                                  <td>{{ project.project_title }}</td>
+                                  <td class="text-right"><span class="badge badge-danger">{{ project.deadline }}</span></td>
+                              </tr>
+                          {% endfor %}
+                      </tbody>
+                  </table>
+                  {% if not nearest_deadline_projects %}
+                      <div class="alert alert-info mt-3" role="alert">
+                          No projects near deadline.
+                      </div>
+                  {% endif %}
+              </div>
+              
+                </div>
+            </div>
+            
+            <!-- Latest Leads Section -->
+            <div class="col-md-6 mb-2">
+                <div class="latest-leads card">
+                  <div class="card-header d-flex align-items-center" style="background-color: #d4edda; color: #155724;">
+
+                        <h3 class="card-title mb-0">Latest Leads</h3>
+                        <div class="ml-auto">
+                          <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                              <i class="fas fa-minus"></i>
+                          </button>
+                          <button type="button" class="btn btn-tool" data-card-widget="remove">
+                              <i class="fas fa-times"></i>
+                          </button>
+                      </div>
+                    </div>
+                    <div class="card-body">
+                      <table class="table table-borderless">
+                          <tbody>
+                              {% for lead in latest_leads %}
+                                  <tr>
+                                      <td>{{ lead.project_name }}</td>
+                                      <td>{{ lead.company }}</td>
+                                      <td class="text-right"><span class="badge badge-success">${{ lead.budget }}</span></td>
+                                  </tr>
+                              {% endfor %}
+                          </tbody>
+                      </table>
+                      {% if not latest_leads %}
+                          <div class="alert alert-info mt-3" role="alert">
+                              No new leads.
+                          </div>
+                      {% endif %}
+                  </div>
+                  
+                </div>
+            </div>
+
+           
+        </div>
+        <div class="row mt-2">
+          <!-- Last 3 Tasks Section -->
+          <div class="col-md-6 mb-2">
+              <div class="last-tasks card">
+                <div class="card-header d-flex align-items-center" style="background-color: #e0f7fa; color: #00796b;">
+                      <h3 class="card-title mb-0">Last 3 Tasks</h3>
+                      <div class="ml-auto">
+                          <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                              <i class="fas fa-minus"></i>
+                          </button>
+                          <button type="button" class="btn btn-tool" data-card-widget="remove">
+                              <i class="fas fa-times"></i>
+                          </button>
+                      </div>
+                  </div>
+                  <div class="card-body">
+                    <table class="table table-borderless">
+                        <tbody>
+                            {% for task in last_tasks %}
+                                <tr>
+                                    <td>{{ task.title }}</td>
+                                    <td>{{ task.employee }}</td>
+                                    <td class="text-right"><span class="badge badge-info">{{ task.due_date }}</span></td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% if not last_tasks %}
+                        <div class="alert alert-info mt-3" role="alert">
+                            No tasks available.
+                        </div>
+                    {% endif %}
+                </div>
+                
+              </div>
+          </div>
+
+          <!-- Last 3 Unpaid Invoices Section -->
+          <div class="col-md-6 mb-2">
+              <div class="last-unpaid-invoices card">
+                <div class="card-header d-flex align-items-center" style="background-color: #e9ecef; color:#343a40;">
+                      <h3 class="card-title mb-0">Last 3 Unpaid Invoices</h3>
+                      <div class="ml-auto">
+                          <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                              <i class="fas fa-minus"></i>
+                          </button>
+                          <button type="button" class="btn btn-tool" data-card-widget="remove">
+                              <i class="fas fa-times"></i>
+                          </button>
+                      </div>
+                  </div>
+                  <div class="card-body">
+                    <table class="table table-borderless">
+                        <tbody>
+                            {% for invoice in last_unpaid_invoices %}
+                                <tr>
+                                    <td>Invoice #{{ invoice.id }} for {{ invoice.client.name }}</td>
+                                    <td class="text-right"><span class="badge badge-secondary">{{ invoice.invoice_date }}</span></td>
+                                    <td class="text-right">${{ invoice.total_amount }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                    {% if not last_unpaid_invoices %}
+                        <div class="alert alert-info mt-3" role="alert">
+                            No unpaid invoices available.
+                        </div>
+                    {% endif %}
+                </div>
+                
+              </div>
+          </div>
+      </div>
+        </div>
+      </section>
+      {% endblock content %}
+    </div>
+  </div>
+</body>
+
+{% block extra_scripts %}
+<script>
+  document.querySelectorAll('select[name="year"], select[name="month"]').forEach(element => {
+    element.addEventListener('change', function() {
+      this.form.submit();
+    });
+  });
+
+
+  // chart
+  const chartData = JSON.parse('{{ chart_data|escapejs }}');
+    let chartType = '{{ chart_type|escapejs }}';  // Initial chart type from the server
+
+    const ctx = document.getElementById('monthlyRecapChart').getContext('2d');
+    let myChart = new Chart(ctx, {
+        type: chartType, // Use the dynamic chart type here
+        data: chartData,
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+
+    document.querySelector('select[name="chart_type"]').addEventListener('change', function() {
+        const newChartType = this.value;
+
+        myChart.destroy(); // Destroy the previous chart instance
+        myChart = new Chart(ctx, {
+            type: newChartType,
+            data: chartData,
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock extra_scripts %}

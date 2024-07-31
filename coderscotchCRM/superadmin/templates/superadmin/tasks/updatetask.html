@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+{% extends 'superadmin/base.html' %}
+{% block content %}
+{% load custom_filters %}
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-12">
+            <div class="card">
+                <div class="card-header bg-secondary text-white">
+                    <h3 class="card-title text-center">{{ form.instance.pk|yesno:"Update Task,Create Task" }}</h3>
+                </div>
+                {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-warning">{{ message }}</div>
+                {% endfor %}
+                {% endif %}
+                <form method="post" enctype="multipart/form-data"
+                    action="{% if form.instance.pk %}{% url 'superadmin:update_task' task.id%}{% else %}{% url 'superadmin:create_task' %}{% endif %}">
+                    {% csrf_token %}
+                    {% if board %}
+                    <input type="hidden" name="board_id" value="{{ board.id }}">
+                    {% endif %}
+                    <div class="card-body p-3">
+                        {{ form.non_field_errors }}
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="{{ form.title.id_for_label }}">Title</label>
+                                    {{ form.title|add_class:"form-control form-control-sm" }}
+                                    {{ form.title.errors }}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="{{ form.project.id_for_label }}">Project</label>
+                                    {{ form.project|add_class:"form-control form-control-sm" }}
+                                    {{ form.project.errors }}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="{{ form.employee.id_for_label }}">Assigned To</label>
+                                    {{ form.employee|add_class:"form-control form-control-sm" }}
+                                    {{ form.employee.errors }}
+                                </div>
+                            </div>
+                        </div>
+                      
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="{{ form.status.id_for_label }}">Status</label>
+                                    {{ form.status|add_class:"form-control form-control-sm" }}
+                                    {{ form.status.errors }}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="{{ form.due_date.id_for_label }}">Due Date</label>
+                                    {{ form.due_date|add_class:"form-control form-control-sm" }}
+                                    {{ form.due_date.errors }}
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="{{ form.board.id_for_label }}">Board</label>
+                                    <select name="board" id="{{ form.board.id_for_label }}"
+                                        class="form-control form-control-sm">
+                                        {% for b in boards %}
+        <option value="{{ b.id }}" {% if form.initial.board == b.id %}selected{% endif %}>{{ b.name }}</option>
+    {% endfor %}
+                                    </select>
+                                    {{ form.board.errors }}
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="{{ form.description.id_for_label }}">Description</label>
+                                    {{ form.description|add_class:"form-control form-control-sm" }}
+                                    {{ form.description.errors }}
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="{{ form.attachment.id_for_label }}">Attachment</label>
+                            <div id="attachment-dropzone" class="dropzone">
+                                <div class="fallback">
+                                    <input name="attachment" type="file" multiple />
+                                </div>
+                            </div>
+                            {{ form.attachment.errors }}
+                        </div>
+                    </div>
+                    <div class="card-footer text-right">
+                        <button type="submit" class="btn btn-primary btn-sm">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block extra_scripts %}
+<!-- Main content will be injected here -->
+<script>
+    $(document).ready(function () {
+        // Initialize Dropzone
+        Dropzone.autoDiscover = false;
+        var myDropzone = new Dropzone("#attachment-dropzone", {
+            url: "{% url 'superadmin:create_task' %}",  // URL to handle file upload
+            paramName: "attachment",  // Name of the parameter that will contain the file
+            maxFilesize: 5,  // Max file size in MB
+            addRemoveLinks: true,  // Add remove links for uploaded files
+            dictDefaultMessage: "Drag and drop files here or click to upload",
+            dictRemoveFile: "Remove",
+            // Optional: Handle success and error events
+            success: function (file, response) {
+                // Handle success
+                console.log(response);
+            },
+            error: function (file, response) {
+                // Handle error
+                console.error(response);
+            }
+        });
+    });
+</script>
+{% endblock extra_scripts %}
+<!-- Main content will be injected here -->
