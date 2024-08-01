@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'django_countries',
     'crispy_forms',
     'crispy_bootstrap4',
+    'CoderscotchCRM'
 ]
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
