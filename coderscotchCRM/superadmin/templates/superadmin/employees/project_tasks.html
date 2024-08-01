@@ -1,13 +1,54 @@
+<!-- project_tasks.html -->
 {% extends "superadmin/base.html" %}
 
 {% block content %}
-<h1>Tasks for Project: {{ project.name }}</h1>
-
-<ul>
-    {% for task in tasks %}
-    <li>{{ task.title }} - {{ task.board }}</li>
-    {% endfor %}
-</ul>
-
-<a href="{% url 'superadmin:employee_detail' project.employees.first.id %}">Back to Employee Detail</a>
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header">
+            <h1 class="card-title">Tasks for Project: {{ project.project_title }}</h1>
+        </div>
+        <div class="card-body">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Description</th>
+                        <th>Priority</th>
+                        <th>Status</th>
+                        <th>Due Date</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for task in tasks %}
+                        <tr>
+                            <td>{{ task.title }}</td>
+                            <td>{{ task.description }}</td>
+                            <td>
+                                {% if task.priority == 'medium' %}
+                                    <span class="badge badge-warning">{{ task.get_priority_display }}</span>
+                                {% elif task.priority == 'low' %}
+                                    <span class="badge badge-success">{{ task.get_priority_display }}</span>
+                                {% else %}
+                                    <span class="badge badge-danger">{{ task.get_priority_display }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if task.status == 'inprogress' %}
+                                    <span class="badge badge-warning">{{ task.get_status_display }}</span>
+                                {% else %}
+                                    <span class="badge badge-success">{{ task.get_status_display }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ task.due_date|date:"d/m/Y" }}</td>
+                        </tr>
+                    {% empty %}
+                        <tr>
+                            <td colspan="5" class="text-center">No tasks found for this project.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
 {% endblock %}

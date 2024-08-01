@@ -232,7 +232,7 @@ class Project(models.Model):
     deadline = models.DateField()
     project_cost = models.DecimalField(max_digits=10, decimal_places=2)
     employees = models.ManyToManyField(Employee, related_name='projects')
-    project_files = models.FileField(upload_to='project_files/', blank=True, null=True)
+    
 
 
 
@@ -287,12 +287,12 @@ class Task(models.Model):
     ]
 
     title = models.CharField(max_length=25)
-    project = models.ForeignKey(Project, on_delete=models.CASCADE)
+    project = models.ForeignKey(Project, on_delete=models.CASCADE,related_name='tasks')
     board = models.ForeignKey(Board, on_delete=models.CASCADE)
     description = models.TextField()
     due_date = models.DateField()
     attachment = models.FileField(upload_to='task_attachments/', blank=True, null=True)
-    employee = models.ForeignKey(Employee, on_delete=models.CASCADE)
+    employee = models.ForeignKey(Employee, on_delete=models.CASCADE,related_name='tasks')
     priority = models.CharField(max_length=50, choices=PRIORITY_CHOICES, default="medium")
     status = models.CharField(max_length=50, choices=STATUS_CHOICES, default="inprogress")
 

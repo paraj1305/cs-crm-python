@@ -1,6 +1,24 @@
 <!DOCTYPE html>
 {% extends 'superadmin/base.html' %}
 {% load custom_filters %}
+{% block extra_styles %}
+<!-- Additional styles can be added here -->
+<style>
+    .spinner-container {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        background-color: rgba(255, 255, 255, 0.27);
+        z-index: 9999;
+        visibility: hidden; /* Initially hide the spinner */
+    }
+</style>
+{% endblock extra_styles %}
 {% block content %}
 <div class="container mt-5">
     <div class="row justify-content-center">
@@ -63,7 +81,7 @@
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="{{ form.salary.id_for_label }}">Salary</label>
+                                    <label for="{{ form.salary.id_for_label }}">Salary($)</label>
                                     {{ form.salary|add_class:"form-control form-control-sm" }}
                                     <div class="text-danger small" id="error-salary"></div>
                                 </div>
@@ -97,6 +115,15 @@
         </div>
     </div>
 </div>
+
+<!-- Spinner Container -->
+<div id="spinner-container" class="spinner-container">
+    <div class="spinner-border text-primary" role="status">
+        <span class="sr-only">Loading...</span>
+    </div>
+</div>
+
+
 {% endblock content %}
 
 {% block extra_scripts %}
@@ -131,6 +158,9 @@
                 var employeeForm = document.querySelector("#employee-form");
                 var formData = new FormData(employeeForm);
 
+                // Show the spinner
+                document.getElementById("spinner-container").style.visibility = "visible";
+
                 // Submit the form via AJAX
                 fetch(employeeForm.action, {
                     method: "POST",
@@ -156,6 +186,9 @@
                             window.location.href = "{% url 'superadmin:employee_list' %}";
                         }
                     } else if (data.errors) {
+                        // Hide the spinner
+                        document.getElementById("spinner-container").style.visibility = "hidden";
+                        
                         for (let [field, messages] of Object.entries(data.errors)) {
                             let errorElement = document.getElementById(`error-${field}`);
                             if (errorElement) {
@@ -165,6 +198,9 @@
                     }
                 })
                 .catch(data => {
+                    // Hide the spinner
+                    document.getElementById("spinner-container").style.visibility = "hidden";
+                    
                     if (data.errors) {
                         for (let [field, messages] of Object.entries(data.errors)) {
                             let errorElement = document.getElementById(`error-${field}`);
@@ -180,12 +216,18 @@
 
             // Handle successful uploads
             myDropzone.on("queuecomplete", function() {
+                // Hide the spinner
+                document.getElementById("spinner-container").style.visibility = "hidden";
+                
                 // Redirect to the employee list or show a success message
                 window.location.href = "{% url 'superadmin:employee_list' %}";
             });
 
             // Handle errors during file upload
             myDropzone.on("error", function(file, response) {
+                // Hide the spinner
+                document.getElementById("spinner-container").style.visibility = "hidden";
+                
                 console.error("Error uploading file:", response);
             });
         }

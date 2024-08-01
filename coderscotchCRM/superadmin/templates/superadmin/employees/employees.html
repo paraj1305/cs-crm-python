@@ -50,7 +50,7 @@
                         <td>{{ employee.last_name }}</td>
                         <td>{{ employee.email }}</td>
                         <td>{{ employee.joining_date|date:"d/m/Y" }}</td>
-                        <td>{{ employee.salary }}</td>
+                        <td>${{ employee.salary }}</td>
                         <td class="text-center align-middle">
                             <a href="{% url 'superadmin:create_salary_slip' employee.pk %}" class="text-success" title="Create Salary Slip">
                                 <i class="fas fa-file-invoice-dollar"></i>

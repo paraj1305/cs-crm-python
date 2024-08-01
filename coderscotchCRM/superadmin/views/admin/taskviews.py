@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from superadmin.models import Task ,Board,Task,Employee,TaskFile
+from superadmin.models import Task ,Board,Task,Employee,TaskFile,Project
 from .forms import TaskForm , BoardForm
 from django.contrib import messages
 from django.shortcuts import render, redirect, get_object_or_404
@@ -16,12 +16,20 @@ from django.views.decorators.http import require_POST
 
 @login_required(login_url='/superadmin/login/')
 def create_task(request):
-    
     boards = Board.objects.all()
+    projects = Project.objects.all()
+    employees = Employee.objects.none()  # Initialize with no employees
+
     selected_board_id = request.GET.get('board_id')
+    selected_project_id = request.GET.get('project_id')
 
     # Prepare initial data with board_id if provided
     initial_data = {'board': selected_board_id} if selected_board_id else None
+
+    if selected_project_id:
+        # Filter employees based on selected project
+        project = get_object_or_404(Project, id=selected_project_id)
+        employees = project.employees.all()
 
     # Initialize the form with POST data (for form submission) or initial data (for pre-filling)
     form = TaskForm(request.POST or None, request.FILES or None, initial=initial_data)
@@ -34,7 +42,7 @@ def create_task(request):
                 TaskFile.objects.create(task=task, file=file)
             form.save()  # Save the form data to create a new Task object
             
-            messages.success(request, 'Task create successfully')
+            messages.success(request, 'Task created successfully')
             return redirect('superadmin:kanban_board')  # Redirect after successful creation
         else:
             # Form is invalid, handle the errors
@@ -44,8 +52,21 @@ def create_task(request):
     return render(request, 'superadmin/tasks/createtask.html', {
         'form': form,
         'boards': boards,
+        'projects': projects,
+        'employees': employees,
         'selected_board_id': selected_board_id,  # Pass the selected board ID to the template for pre-selection
+        'selected_project_id': selected_project_id,  # Pass the selected project ID to the template for pre-selection
     })
+
+def fetch_employees(request):
+    project_id = request.GET.get('project_id')
+    employees = Employee.objects.none()  # Default to no employees
+    if project_id:
+        project = get_object_or_404(Project, id=project_id)
+        employees = project.employees.all()
+    
+    employees_list = list(employees.values('id', 'first_name', 'last_name'))
+    return JsonResponse({'employees': employees_list})
 
 # @csrf_exempt
 # @require_POST

@@ -55,7 +55,7 @@
                         <td>{{ lead.company }}</td>
                         <td>{{ lead.location.name }}</td>
                         <td>{{ lead.Timeline|date:"d/m/Y" }}</td>
-                        <td>{{ lead.budget }}</td>
+                        <td>${{ lead.budget }}</td>
                         <td class="text-center align-middle">
                             <a href="{% url 'superadmin:lead_update' lead.pk %}" class="text-primary mr-2" title="Update">
                                 <i class="fa-solid fa-pen-to-square"></i>

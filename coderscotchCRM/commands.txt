@@ -1,0 +1,6 @@
+Install the Packages Using pip:
+Once the requirements.txt file is on your server, navigate to the directory containing the file and run the following command:
+
+- activate  Virtual Environment : myenv\Scripts\activate
+
+- pip install -r requirements.txt

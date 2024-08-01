@@ -108,6 +108,53 @@
                 </div>
             </div>
         </div>
+        <div class="card-footer bg-light">
+            <h5>Tasks</h5>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Title</th>
+                            <th>Priority</th>
+                            <th>Status</th>
+                            <th>Description</th>
+                            <th>Due Date</th>
+                         
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for task in project_tasks %}
+                        <tr>
+                            <td>{{ task.title }}</td>
+                            <td>
+                                {% if task.priority == 'medium' %}
+                                    <span class="badge badge-warning">{{ task.get_priority_display }}</span>
+                                {% elif task.priority == 'low' %}
+                                    <span class="badge badge-success">{{ task.get_priority_display }}</span>
+                                {% else %}
+                                    <span class="badge badge-danger">{{ task.get_priority_display }}</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if task.status == 'inprogress' %}
+                                    <span class="badge badge-warning">{{ task.get_status_display }}</span>
+                                {% else %}
+                                    <span class="badge badge-success">{{ task.get_status_display }}</span>
+                                {% endif %}
+                            </td>
+                            <td>{{ task.description }}</td>
+                            <td>{{ task.due_date|date:"d/m/Y" }}</td>
+                           
+                        </tr>
+                        {% empty %}
+                        <tr>
+                            <td colspan="6" class="text-center">No tasks available.</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
         <div class="card-footer">
             <table class="table table-striped">
                 <thead class="bg-dark text-white">

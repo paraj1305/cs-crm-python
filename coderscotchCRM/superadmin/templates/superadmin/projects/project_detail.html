@@ -118,6 +118,7 @@
                     <thead>
                         <tr>
                             <th>Task Title</th>
+                            <th>Assigned To</th>
                             <th>Description</th>
                             <th>Priority</th>
                             <th>Status</th>
@@ -128,6 +129,7 @@
                         {% for task in tasks %}
                             <tr>
                                 <td>{{ task.title }}</td>
+                                <td>{{task.employee}}</td>
                                 <td>{{ task.description }}</td>
                                 <td>
                                     {% if task.priority == 'medium' %}
@@ -146,6 +148,7 @@
                                     {% endif %}
                                 </td>
                                 <td>{{ task.due_date|date:"d/m/Y" }}</td>
+                                
                             </tr>
                         {% empty %}
                             <tr>

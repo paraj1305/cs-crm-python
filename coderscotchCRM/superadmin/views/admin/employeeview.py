@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect, get_object_or_404
-from superadmin.models import Employee,EmployeeImage,SalarySlip,Superadmin,Task
+from superadmin.models import Employee,EmployeeImage,SalarySlip,Superadmin,Task,Project
 from django.contrib import messages
 from .forms import EmployeeForm,SalarySlipForm
 from django.urls import reverse
@@ -115,15 +115,27 @@ def employee_detail(request,employee_id):
     employee=get_object_or_404(Employee,pk=employee_id)
     employee_images=employee.images.all()
     tasks = Task.objects.filter(employee=employee)
+    employees = Employee.objects.all()
     
     
     contex={
         'employee':employee,
         'employee_images':employee_images,   
-        'tasks':tasks
+        'tasks':tasks,
+        'employees': employees,
     }
     return render(request,'superadmin/employees/employee_details.html',contex)
 
+@login_required(login_url='/superadmin/login/')
+def project_tasks(request, project_id):
+    project = get_object_or_404(Project, id=project_id)
+    # tasks = project.tasks.all()
+    tasks = Task.objects.filter(project=project, employee__id=request.GET.get('employee_id', None))
+
+    return render(request, 'superadmin/employees/project_tasks.html', {
+        'project': project,
+        'tasks': tasks,
+    })
 
 def check_or_create_salary_slip(request, employee_id):
     employee = get_object_or_404(Employee, pk=employee_id)

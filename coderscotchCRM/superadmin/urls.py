@@ -42,6 +42,7 @@ urlpatterns = [
     path('employee/<int:employee_id>/create-salary-slip/', employeeview.create_salary_slip, name='create_salary_slip'),
     path('salary_slip/<int:salary_slip_id>/', employeeview.salary_slip_detail, name='salary_slip_detail'),
     path('salary_slip/<int:salary_slip_id>/update-slip/', employeeview.update_salary_slip, name='update_salary_slip'),
+    path('project/<int:project_id>/tasks/', employeeview.project_tasks, name='project_tasks'),
 
 
     # Project URLs
@@ -67,7 +68,8 @@ urlpatterns = [
     path('kanban/delete_board/<int:board_id>/', taskviews.delete_board, name='delete_board'),
     path('update_task_board/<int:task_id>/', taskviews.update_task_board, name='update_task_board'),
     # path('upload-task-files/', taskviews.upload_task_files, name='upload_task_filess'),
-    
+    path('fetch-employees/', taskviews.fetch_employees, name='fetch_employees'),
+   
     #Leads urls
     path('leads/', leadsviews.lead_list, name='lead_list'),
     path('leads/<int:pk>/', leadsviews.lead_detail, name='lead_detail'),

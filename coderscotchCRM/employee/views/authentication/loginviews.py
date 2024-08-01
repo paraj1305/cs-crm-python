@@ -32,11 +32,11 @@ def employee_login(request):
                 request.session['employee_first_name'] = user.first_name
                 request.session['employee_last_name'] = user.last_name
                 
-                try:
-                    employee_image = EmployeeImage.objects.get(employee=user)
-                    image_url = employee_image.image.url
-                except ObjectDoesNotExist:
-                    image_url = None
+                # try:
+                #     employee_image = EmployeeImage.objects.get(employee=user)
+                #     image_url = employee_image.image.url
+                # except ObjectDoesNotExist:
+                #     image_url = None
 
                 return redirect('employee:home_view')
             else:
@@ -50,7 +50,7 @@ def employee_login(request):
         
     context = {
         'form': form,
-        'image_url': image_url,
+
        
     } 
     return render(request, 'employee/authentication/form.html',context)
@@ -145,7 +145,7 @@ def project_list(request):
     status_filter = request.GET.get('status', '')
 
     if search_query:
-        projects = employee.projects.filter(
+        projects = Project.objects.filter(tasks__isnull=False).distinct()(
             Q(project_title__icontains=search_query) |
             Q(client__name__icontains=search_query)
         )
@@ -177,16 +177,16 @@ def project_list(request):
     }
     return render(request, 'employee/projects/projects.html', context)
 
-# project details
 def projects(request, project_id):
     """Display detailed information about a specific project."""
     project = get_object_or_404(Project, pk=project_id)
-    project_files = project.files.all()
+    project_files = project.files.all()  # Fetch related project files using 'files' related name
     change_requests = project.changerequest_set.all()  # Fetch related change requests
+    project_tasks = project.tasks.all()  # Fetch related tasks
+
     return render(request, 'employee/projects/projects_details.html', {
         'project': project,
         'change_requests': change_requests,
-        'project_files':project_files
+        'project_files': project_files,
+        'project_tasks': project_tasks,
     })
-
-   
