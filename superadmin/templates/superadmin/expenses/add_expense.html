@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+{% extends 'superadmin/base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+<body>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <div class="card">
+                    <div class="card-header">
+                        {% if expense %}
+                            <h4>Update Expense</h4>
+                        {% else %}
+                            <h4>Add New Expense</h4>
+                        {% endif %}
+                    </div>
+                    <div class="card-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="{{ form.category.id_for_label }}">Name</label>
+                                        {{ form.category }}
+                                        <div class="text-danger small" id="error-name">
+                                            {{ form.category.errors }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-12">
+                                    <div class="form-group">
+                                        <label for="{{ form.description.id_for_label }}">description</label>
+                                        {{ form.description }}
+                                        <div class="text-danger small" id="error-description">
+                                            {{ form.description.errors }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="{{ form.date.id_for_label }}">Date</label>
+                                        {{ form.date }}
+                                        <div class="text-danger small" id="error-date">
+                                            {{ form.date.errors }}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="{{ form.amount.id_for_label }}">Amount($)</label>
+                                        {{ form.amount }}
+                                        <div class="text-danger small" id="error-amount">
+                                            {{ form.amount.errors }}
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                           
+                            </div>
+                            <div class="card-footer text-right">
+                                <button type="submit" class="btn btn-primary">
+                                    {% if expense %}
+                                        Update Expense
+                                    {% else %}
+                                        Add Expense
+                                    {% endif %}
+                                </button>
+                                {% if expense %}
+                                    <a href="{% url 'superadmin:expense_list' %}" class="btn btn-secondary">Cancel</a>
+                                {% endif %}
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+{% endblock %}

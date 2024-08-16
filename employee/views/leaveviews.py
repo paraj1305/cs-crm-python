@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect,get_object_or_404
 from django.contrib.auth.decorators import login_required
 from employee.models import Leave
 from superadmin.models import Employee
-from .leaves.form import LeaveForm
+from ..form import LeaveForm
 
 
 def apply_leave(request):

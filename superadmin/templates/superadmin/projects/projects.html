@@ -12,16 +12,17 @@
 {% endif %}
 
 <div class="container">
-    <div class="d-flex justify-content-between align-items-center mb-3 mx-3 my-3">
-        <h3 class="card-title">Projects</h3>
+    <div class="card-body">
+    <div class="header text-white py-3 px-4 my-4 rounded d-flex justify-content-between align-items-center" style="background-color:rgb(255, 255, 255)">
+        <h3 class="text-dark">Projects</h3>
         <div>
             <form id="filter-form" method="get" class="form-inline justify-content-end">
                 <div class="form-group mb-2 mr-2">
-                    <input type="text" class="form-control" id="search-query" name="search_query" placeholder="Search by Project Title or Client Name">
+                    <input type="text" class="form-control" id="search-query" name="search_query" placeholder="🔍 Search by Project Title or Client Name">
                 </div>
                 <div class="form-group mb-2 mr-2">
                     <select class="form-control" name="client" onchange="this.form.submit()">
-                        <option value="">All Clients</option>
+                        <option value="">🧑‍💼All Clients</option>
                         {% for client in clients %}
                             <option value="{{ client.id }}" {% if client_filter == client.id|stringformat:"s" %}selected{% endif %}>{{ client.name }}</option>
                         {% endfor %}
@@ -37,42 +38,39 @@
                 </div>
                 <div class="form-group mb-2 mr-2">
                     <select class="form-control" name="status" onchange="this.form.submit()">
-                        <option value="">All Statuses</option>
+                        <option value="">⏳All Statuses</option>
                         {% for status_value, status_display in statuses %}
                             <option value="{{ status_value }}" {% if status_filter == status_value %}selected{% endif %}>{{ status_display }}</option>
                         {% endfor %}
                     </select>
                 </div>
                 <a href="{% url 'superadmin:project_create' %}" class="btn btn-success ml-2"><i class="fa-solid fa-plus"></i></a>
-                <button type="submit" form="bulk-delete-form" class="btn btn-danger ml-2" onclick="return confirmBulkDelete();"><i class="fa-solid fa-trash"></i> </button>
+                <button type="submit" form="bulk-delete-form" class="btn btn-danger ml-2" onclick="return confirmBulkDelete();"><i class="fa-solid fa-trash"></i></button>
             </form>
         </div>
     </div>
 
     <form method="post" action="{% url 'superadmin:bulk_project_delete' %}" id="bulk-delete-form">
         {% csrf_token %}
-        <div class="table-responsive">
-            <table class="table table-striped">
-                <thead class="bg-dark">
-                    <tr>
-                        <th><input type="checkbox" id="select-all"></th>
-                        <th>Project Title</th>
-                        <th>Client Name</th>
-                        <th>Priority</th>
-                        <th>Start Date</th>
-                        <th>Deadline</th>
-                        <th>Cost</th>
-                        <th>Status</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-                <tbody id="project-table-body">
-                    {% for project in projects %}
-                    <tr>
-                        <td><input type="checkbox" name="project_ids" value="{{ project.pk }}"></td>
-                        <td>{{ project.project_title }}</td>
-                        <td>{{ project.client.name }}</td>
-                        <td>
+        <div class="container">
+            {% for project in projects %}
+            <div class="card mb-3">
+                <div class="card-body kanban-task {{project.priority}} ">
+                    <div class="row border-left border-primary">
+                        <div class="col-md-1">
+                            <input type="checkbox" name="project_ids" value="{{ project.pk }}">
+                        </div>
+                        <div class="col-md-4">
+                            <h5 class="card-title">{{ project.project_title }}</h5>
+                            <p class="card-text"><small class="text-muted">{{ project.client.name }}</small></p>
+                        </div>
+                          
+                       
+                        <!-- <div class="col-md-2">
+                           
+                            <p class="card-text"><small class="text-muted">{{ project.client.name }}</small></p>
+                        </div> -->
+                        <div class="col-md-1">
                             {% if project.priority == 'medium' %}
                                 <span class="badge badge-warning">{{ project.get_priority_display }}</span>
                             {% elif project.priority == 'low' %}
@@ -80,18 +78,22 @@
                             {% else %}
                                 <span class="badge badge-danger">{{ project.get_priority_display }}</span>
                             {% endif %}
-                        </td>
-                        <td>{{ project.start_date|date:"d/m/Y" }}</td>
-                        <td>{{ project.deadline|date:"d/m/Y" }}</td>
-                        <td>{{ project.project_cost }}$</td>
-                        <td>
+                        </div>
+                        <div class="col-md-2">
+                            <p class="card-text">{{ project.start_date|date:"d/m/Y" }}-{{ project.deadline|date:"d/m/Y" }}</p>
+
+                        </div>
+                        <div class="col-md-1">
+                            <p class="card-text">{{ project.project_cost }}$</p>
+                        </div>
+                        <div class="col-md-1">
                             {% if project.status == 'inprogress' %}
                                 <span class="badge badge-warning">{{ project.get_status_display }}</span>
                             {% else %}
                                 <span class="badge badge-success">{{ project.get_status_display }}</span>
                             {% endif %}
-                        </td>
-                        <td class="text-center align-middle">
+                        </div>
+                        <div class="col-md-2 text-right">
                             <a href="{% url 'superadmin:project_update' project.pk %}" class="text-primary mr-2" title="Update">
                                 <i class="fa-solid fa-pen-to-square"></i>
                             </a>
@@ -101,58 +103,52 @@
                                     <i class="fa-solid fa-trash"></i>
                                 </button>
                             </form>
-                            <a href="{% url 'superadmin:project_detail' project.pk %}" class="text-info mr-2" title="Details">
-                                <i class="fas fa-info-circle"></i>
+                            <a href="{% url 'superadmin:project_detail' project.pk %}" class="text-info" title="Details">
+                                <i class="fas fa-info-circle fa-1x"></i>
                             </a>
-                        </td>
-                        
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
         </div>
     </form>
+    
+    
 </div>
 {% endblock %}
 
 {% block extra_scripts %}
 <script>
-    document.addEventListener('DOMContentLoaded', function() {
-        document.getElementById('select-all').addEventListener('click', function(event) {
-            let checkboxes = document.querySelectorAll('input[name="project_ids"]');
-            checkboxes.forEach(checkbox => {
-                checkbox.checked = event.target.checked;
-            });
-        });
-
-        // Live search as you type
-        document.getElementById('search-query').addEventListener('input', function(event) {
-            let searchQuery = event.target.value.trim().toLowerCase();
-            filterProjects(searchQuery);
-        });
-
-        function filterProjects(searchQuery) {
-            let rows = document.querySelectorAll('#project-table-body tr');
-            rows.forEach(row => {
-                let projectTitle = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
-                let clientName = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
-
-                if (projectTitle.includes(searchQuery) || clientName.includes(searchQuery)) {
-                    row.style.display = '';
-                } else {
-                    row.style.display = 'none';
-                }
-            });
-        }
-
-        // Confirm delete functions
-        window.confirmDelete = function() {
-            return confirm('Are you sure you want to delete this client?');
-        }
-
-        window.confirmBulkDelete = function() {
-            return confirm('Are you sure you want to delete the selected clients?');
-        }
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('search-query').addEventListener('input', function(event) {
+        let searchQuery = event.target.value.trim().toLowerCase();
+        filterProjects(searchQuery);
     });
+
+    function filterProjects(searchQuery) {
+        let cards = document.querySelectorAll('.card'); // Targeting the card elements
+        cards.forEach(card => {
+            let projectTitle = card.querySelector('.card-title').textContent.toLowerCase();
+            let clientName = card.querySelector('.card-text small').textContent.toLowerCase(); // Adjusted to target client name
+
+            if (projectTitle.includes(searchQuery) || clientName.includes(searchQuery)) {
+                card.style.display = '';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+
+    // Confirm delete functions
+    window.confirmDelete = function() {
+        return confirm('Are you sure you want to delete this project?');
+    }
+
+    window.confirmBulkDelete = function() {
+        return confirm('Are you sure you want to delete the selected projects?');
+    }
+});
+
 </script>
 {% endblock %}

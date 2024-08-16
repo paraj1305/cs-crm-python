@@ -4,9 +4,11 @@
 <div class="container my-4">
     <div class="kanban-controls mb-4">
         {% if messages %}
+        <div id="message-container">
             {% for message in messages %}
-                <div class="alert alert-success">{{ message }}</div>
+            <div class="alert alert-success">{{ message }}</div>
             {% endfor %}
+        </div>
         {% endif %}
         <!-- Add Board Form -->
         <form action="{% url 'superadmin:add_board' %}" method="post" class="d-inline-flex">

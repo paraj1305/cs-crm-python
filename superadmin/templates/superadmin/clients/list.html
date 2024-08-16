@@ -18,21 +18,21 @@
             <form id="filter-form" method="get" class="form-inline">
                 <div class="form-group mr-2">
                     <label for="search-query" class="sr-only">Search</label>
-                    <input type="text" name="search" id="search-query" class="form-control" placeholder="Search by Name, Email, or Phone">
+                    <input type="text" name="search" id="search-query" class="form-control" placeholder="🔍 Search by Name, Email, or Phone">
                 </div>
                 <div class="form-group mr-2">
                     <label for="id_location" class="sr-only">Location</label>
                     <select name="location" id="id_location" class="form-control" onchange="this.form.submit()">
-                        <option value="">Location</option>
+                        <option value="">📍Location</option>
                         {% for loc in locations %}
                             <option value="{{ loc }}" {% if filters.location == loc %}selected{% endif %}>{{ loc }}</option>
                         {% endfor %}
                     </select>
                 </div>
                 <div class="form-group mr-2">
-                    <label for="id_industry" class="sr-only">Industry</label>
+                    <label for="id_industry" class="sr-only">🏭Industry</label>
                     <select name="industry" id="id_industry" class="form-control" onchange="this.form.submit()">
-                        <option value="">Industry</option>
+                        <option value="">🏭Industry</option>
                         {% for ind in industries %}
                             <option value="{{ ind }}" {% if filters.industry == ind %}selected{% endif %}>{{ ind }}</option>
                         {% endfor %}
@@ -51,7 +51,7 @@
         <form method="post" action="{% url 'superadmin:bulk_client_delete' %}" id="bulk-delete-form">
             {% csrf_token %}
             <div class="table-responsive">
-                <table class="table table-striped">
+                <table class="table table-striped table-hover">
                     <thead class="bg-dark">
                         <tr>
                             <th><input type="checkbox" id="select-all"></th>
@@ -60,7 +60,7 @@
                             <th scope="col">Phone</th>
                             <th scope="col">Location</th>
                             <th scope="col">Industry</th>
-                            <th scope="col">Action</th>
+                            <th scope="col">Action</th> 
                         </tr>
                     </thead>
                     <tbody id="client-table-body">

@@ -1,6 +1,8 @@
 # superadmin/urls.py
 from django.urls import path
-from .views.admin import views, clientViews, employeeview, projectviews,taskviews,leadsviews,leavesview,invoiceviews
+
+from .views import clientViews, employeeview, expenseviews, invoiceviews, leadsviews, leavesview, projectviews, taskviews
+from .views import views
 from django.conf import settings
 from django.conf.urls.static import static
 
@@ -12,6 +14,7 @@ urlpatterns = [
     path('home/', views.home_view, name='home'),
     path('login/', views.login_view, name='login'),
     path('logout/', views.logout_view, name='logout'),
+   
     
     path('create-superadmin/', views.edit_superadmin, name='edit_superadmin'),
     path('profile/', views.admin_profile, name='admin_profile'),
@@ -94,6 +97,12 @@ urlpatterns = [
     path('invoice/<int:invoice_id>/item/<int:item_id>/delete/', invoiceviews.invoice_item_delete, name='invoice_item_delete'),
     path('invoice/<int:invoice_id>/send/', invoiceviews.send_invoice_pdf, name='send_invoice_pdf'),
     path('invoice/<int:invoice_id>/download/', invoiceviews.download_invoice_pdf, name='download_invoice_pdf'),
+    
+    path('expenses/', expenseviews.expense_list, name='expense_list'),
+   path('expense/add/', expenseviews.add_or_update_expense, name='add_expense'),
+    path('expense/update/<int:pk>/', expenseviews.add_or_update_expense, name='update_expense'),
+    path('expense/delete/<int:pk>/', expenseviews.delete_expense, name='delete_expense'),
+    
     
 ]
 

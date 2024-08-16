@@ -18,9 +18,9 @@
                 <!-- Display Client Image as Profile Picture -->
                 <div class="col-md-12 text-center mb-4">
                     {% if client.images.exists %}
-                        <img src="{{ client.images.first.image.url }}" class="img-fluid rounded-circle" alt="Client Image" style="width: 130px; height: 120px; object-fit: cover; opacity: .8">
+                        <img src="{{ client.images.first.image.url }}" class="rounded-circle" alt="Client Image" style="width: 130px; height: 120px; object-fit: cover;">
                     {% else %}
-                        <img src="{% static 'myapp/img/profile.png' %}" class="img-fluid rounded-circle" alt="Default Image" style="width: 130px; height: 120px; object-fit: cover; opacity: .8">
+                        <img src="{% static 'myapp/img/profile.png' %}" class="rounded-circle" alt="Default Image" style="width: 130px; height: 120px; object-fit: cover; ">
                     {% endif %}
                 </div>
                 <div class="col-md-6">

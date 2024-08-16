@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+{% extends 'superadmin/base.html' %}
+{% load custom_filters %}
+
+{% block content %}
+<body>
+    <div class="container mt-5">
+        <div class="d-flex justify-content-between align-items-center mb-3 mx-3 my-3">
+            <h3 class="card-title">Expenses</h3>
+            <div class="d-flex align-items-center">
+                <form id="filter-form" method="get" class="form-inline">
+                    <div class="form-group mr-2">
+                        <label for="search-query" class="sr-only">Search</label>
+                        <input type="text" name="search" id="search-query" class="form-control" placeholder="🔍 Search by Name,Date or Description">
+                    </div>
+                    
+                   
+                </form>
+
+                <a href="{% url 'superadmin:add_expense' %}" class="btn btn-success ml-2"><i class="fa-solid fa-plus"></i></a>
+            </div>
+        </div>
+       
+        <div class="table-responsive">
+            <table class="table table-striped table-hover">
+                <thead class="bg-dark text-light">
+                    <tr>
+                        <th scope="col">Expense Name</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Date</th>
+                        <th scope="col">Amount</th>
+                        <th scope="col">Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="expense-table-body">
+                    {% for expense in expenses %}
+                    <tr>
+                        <td>{{ expense.category }}</td>
+                        <td>{{ expense.description }}</td>
+                        <td>{{ expense.date | date:"M Y" }}</td>
+                        <td>${{ expense.amount }}</td>
+
+                        <td class="text-center align-middle">
+                            <a href="{% url 'superadmin:update_expense' expense.pk %}" class="text-primary mr-2" title="Update">
+                                <i class="fas fa-pen-to-square"></i>
+                            </a>
+                            <form method="post" action="{% url 'superadmin:delete_expense' expense.pk %}" style="display:inline;" onsubmit="return confirmDelete();">
+                                {% csrf_token %}
+                                <button type="submit" class="btn p-0 text-danger mr-2" style="border: none; background: none;" title="Delete">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>  
+</body>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+
+        // Live search as you type
+        document.getElementById('search-query').addEventListener('input', function(event) {
+            let searchQuery = event.target.value.trim().toLowerCase();
+            filterExpenses(searchQuery);
+        });
+
+        function filterExpenses(searchQuery) {
+            let rows = document.querySelectorAll('#expense-table-body tr');
+            rows.forEach(row => {
+                let name = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
+                let des = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+                let date = row.querySelector('td:nth-child(3)').textContent.toLowerCase();
+              
+                if (name.includes(searchQuery) || des.includes(searchQuery) || date.includes(searchQuery)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+     
+
+        // Confirm delete functions
+        window.confirmDelete = function() {
+            return confirm('Are you sure you want to delete this expense?');
+        }
+    });
+</script>
+{% endblock %}

@@ -1,7 +1,7 @@
 body {
     padding-top: 56px;
     font-size: 0.8rem;
-     /* Height of your fixed navbar */
+    background-color:#acff70;
   }
 
 
@@ -147,6 +147,32 @@ body {
 .kanban-task.completed {
     background-color: #d4edda;
 }
+
+.kanban-task.medium {
+    background-color:#fff3cd;
+}
+.kanban-task {
+    background-color: #ffdddd;
+}
+.kanban-task.low {
+    background-color:#d4edda;
+}
+
+.kanban-task {
+    background-color: #ffdddd;
+}
+.kanban-task.approved {
+    background-color:#d4edda;
+}
+
+.kanban-task.unpaid {
+    background-color: #ffdddd;
+}
+.kanban-task.paid {
+    background-color:#d4edda;
+}
+
+
 
 
 .spinner-container {

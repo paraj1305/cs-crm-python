@@ -37,11 +37,7 @@
         <div class="row justify-content-center">
             <div class="col-md-10">
                 <div class="card">
-                    {% if messages %}
-                    {% for message in messages %}
-                    <div class="alert alert-warning">{{ message }}</div>
-                    {% endfor %}
-                    {% endif %}
+                   
                     <form id="task-form" method="post" enctype="multipart/form-data"
                         action="{% if form.instance.pk %}{% url 'superadmin:update_task' task.id %}{% else %}{% url 'superadmin:create_task' %}{% endif %}">
                         {% csrf_token %}

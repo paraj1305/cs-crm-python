@@ -47,6 +47,8 @@ class Superadmin(AbstractBaseUser, PermissionsMixin):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = []
 
+
+
     def __str__(self):
         return self.email
 
@@ -279,8 +281,8 @@ class Task(models.Model):
     ]
 
     STATUS_CHOICES = [
-       ('unassigned', 'Unassigned'),
-        ('todo', 'To Do'),
+        ('unassigned', 'Unassigned'),
+        ('todo','To Do'),
         ('inprogress', 'In Progress'),
         ('inreview', 'In Review'),
         ('completed', 'Completed'),
@@ -367,3 +369,17 @@ class InvoiceItem(models.Model):
 
     def __str__(self):
         return self.title
+    
+    
+class Expense(models.Model):
+    category = models.CharField(max_length=25)
+    description = models.TextField(max_length=65,null=True,blank=True)
+    amount=models.DecimalField(max_digits=10,decimal_places=2)
+    date = models.DateField()
+    repeat_monthly = models.BooleanField(default=False)  # New field
+
+    
+    def __str__(self):
+         return f"{self.category} - {self.amount} on {self.date}"
+    
+    

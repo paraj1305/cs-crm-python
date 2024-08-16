@@ -10,17 +10,17 @@
         {% endfor %}
     </div>
 {% endif %}
-<div class="container">
+<div class="container mt-4">
     <div class="d-flex justify-content-between align-items-center mb-3 mx-3 my-3">
         <h3 class="card-title">Leads</h3>
         <div>
             <form id="filter-form" method="get" class="form-inline justify-content-end">
                 <div class="form-group mb-2 mr-2">
-                    <input type="text" class="form-control" id="search-query" name="search_query" placeholder="Search by name, company, or email" value="{{ search_query }}">
+                    <input type="text" class="form-control" id="search-query" name="search_query" placeholder="🔍 Search by name, company, or email" value="{{ search_query }}">
                 </div>
                 <div class="form-group mb-2 mr-2">
                     <select class="form-control" name="location" onchange="this.form.submit()">
-                        <option value="">All Locations</option>
+                        <option value="">📍 All Locations</option>
                         {% for location in locations %}
                             <option value="{{ location }}" {% if location_filter == location %}selected{% endif %}>{{ location }}</option>
                         {% endfor %}
@@ -33,7 +33,7 @@
     </div>
     <form method="post" action="{% url 'superadmin:bulk_lead_delete' %}" id="bulk-delete-form">
         <div class="table-responsive">
-            <table class="table table-striped">
+            <table class="table table-striped table-hover">
                 <thead class="bg-dark">
                     <tr>
                         <th><input type="checkbox" id="select-all"></th>

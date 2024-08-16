@@ -1,0 +1,68 @@
+    <!-- <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <h2 class="text-center mb-4">SuperAdmin Login</h2>
+                <div class="alert alert-info">
+                    <h5>Email: admin@gmail.com</h5>
+                    <h5>Password: newpassword123</h5>
+                </div>
+                <form method="post" class="border p-4 bg-light shadow rounded">
+                    {% csrf_token %}
+                    {% for field in form %}
+                        {{ field|custom_form_field }}
+                    {% endfor %}
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Login</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div> -->
+
+
+    {% include 'header.html' %}
+{% load custom_filters %}
+<!DOCTYPE html>
+<html lang="en">
+<body>
+    <form method="post" id="quickForm">
+        {% csrf_token %}
+      <div class="input-group mb-3">
+        {{ form.non_field_errors }}
+        {{ form.username }}
+        <div class="input-group-append">
+          <div class="input-group-text">
+            <span class="fas fa-envelope"></span>
+          </div>
+        </div>
+      </div>
+      <div class="input-group mb-3">
+        {{ form.password }}
+        <div class="input-group-append">
+          <div class="input-group-text">
+            <span class="fas fa-lock"></span>
+          </div>
+        </div>
+      </div>
+      {% if messages %}
+      <div id="message-container">
+          {% for message in messages %}
+              <div class="alert alert-warning">{{ message }}</div>
+          {% endfor %}
+      </div>
+  {% endif %}
+      <div class="row">
+     
+        <!-- /.col -->
+        <div class="col-4">
+          <button type="submit" class="btn btn-dark btn-block">Sign In</button>
+        </div>
+        <!-- /.col -->
+      </div>
+    </form>
+
+    {% include 'footer.html' %}
+
+  
+</body>
+</html>

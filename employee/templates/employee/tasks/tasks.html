@@ -2,79 +2,92 @@
 {% load static %}
 
 {% block content %}
-<div class="container mt-5">
-    <div class="d-flex justify-content-between align-items-center my-3 mb-3">
-        <h1 class="card-title mx-3">Tasks Assigned to You</h1>
-        <!-- Search Form -->
-        <form id="filter-form" method="get" class="form-inline justify-content-end">
-            <div class="form-group mb-2 mr-2">
-                <input type="text" class="form-control" id="search-query" name="search_query" placeholder="Search by Project Title or Client Name" value="{{ search_query }}">
-            </div>
-            <div class="form-group mb-2 mr-2">
-                <select class="form-control" name="priority" onchange="this.form.submit()">
-                    <option value="">All Priorities</option>
-                    {% for priority_value, priority_display in priorities %}
-                        <option value="{{ priority_value }}" {% if priority_filter == priority_value %}selected{% endif %}>{{ priority_display }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-            <div class="form-group mb-2 mr-2">
-                <select class="form-control" name="status" onchange="this.form.submit()">
-                    <option value="">All Statuses</option>
-                    {% for status_value, status_display in statuses %}
-                        <option value="{{ status_value }}" {% if status_filter == status_value %}selected{% endif %}>{{ status_display }}</option>
-                    {% endfor %}
-                </select>
-            </div>
-        </form>
-    </div>
-    <div class="table-responsive" id="tasksContainer">
-        <table class="table table-striped">
-            <thead class="bg-dark">
-                <tr>
-                    <th>Title</th>
-                    <th>Project</th>
-                    <th>Priority</th>
-                    <th>Status</th>
-                    <th>Due Date</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
-            <tbody id="tasksTableBody">
+<div class="container">
+    <div class="card-body">
+        <!-- Header Section -->
+        <div class="header text-white py-3 px-4 my-1 rounded d-flex justify-content-between align-items-center" style="background-color:rgb(255, 255, 255)">
+            <h3 class="text-dark">Tasks Assigned to You</h3>
+            <!-- Search Form -->
+            <form id="filter-form" method="get" class="form-inline justify-content-end">
+                <div class="form-group mb-2 mr-2">
+                    <input type="text" class="form-control" id="search-query" name="search_query" placeholder="🔍 Search by Project Title or Client Name" value="{{ search_query }}">
+                </div>
+                <div class="form-group mb-2 mr-2">
+                    <select class="form-control" name="priority" onchange="this.form.submit()">
+                        <option value="">All Priorities</option>
+                        {% for priority_value, priority_display in priorities %}
+                            <option value="{{ priority_value }}" {% if priority_filter == priority_value %}selected{% endif %}>{{ priority_display }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group mb-2 mr-2">
+                    <select class="form-control" name="status" onchange="this.form.submit()">
+                        <option value="">⏳ All Statuses</option>
+                        {% for status_value, status_display in statuses %}
+                            <option value="{{ status_value }}" {% if status_filter == status_value %}selected{% endif %}>{{ status_display }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </form>
+        </div>
+        <!-- Tasks Section -->
+   
+            {% if tasks %}
                 {% for task in tasks %}
-                <tr>
-                    <td>{{ task.title }}</td>
-                    <td>{{ task.project }}</td>
-                    <td>
-                        {% if task.priority == 'medium' %}
-                            <span class="badge badge-warning">{{ task.get_priority_display }}</span>
-                        {% elif task.priority == 'low' %}
-                            <span class="badge badge-success">{{ task.get_priority_display }}</span>
-                        {% else %}
-                            <span class="badge badge-danger">{{ task.get_priority_display }}</span>
-                        {% endif %}
-                    </td>
-                    <td>
-                        {% if task.status == 'inprogress' %}
-                            <span class="badge badge-warning">{{ task.get_status_display }}</span>
-                        {% else %}
-                            <span class="badge badge-success">{{ task.get_status_display }}</span>
-                        {% endif %}
-                    </td>
-                    <td>{{ task.due_date|date:"d/m/Y" }}</td>
-                    <td>
-                        <a href="{% url 'employee:task_detail' task_id=task.id %}" class="btn btn-outline-info btn-sm mr-2">
-                            <i class="fas fa-info-circle"></i>
-                        </a>
-                    </td>
-                </tr>
+                <div class="card my-3">
+                    <div class="card-body kanban-task {{ task.status }}">
+                        <div class="row border-left border-primary">
+                            <div class="col-md-1">
+                                <h5 class="card-title">{{ task.id }}</h5>
+                            </div>
+                            <div class="col-md-4">
+                                <h5 class="card-title">{{ task.title }}</h5>
+                                <p class="card-text"><small class="text-muted">{{ task.project }}</small></p>
+                            </div>
+                            <div class="col-md-2">
+                                {% if task.priority == 'medium' %}
+                                    <span class="badge badge-warning">{{ task.get_priority_display }}</span>
+                                {% elif task.priority == 'low' %}
+                                    <span class="badge badge-success">{{ task.get_priority_display }}</span>
+                                {% else %}
+                                    <span class="badge badge-danger">{{ task.get_priority_display }}</span>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-2">
+                                <p class="card-text">{{ task.due_date|date:"d/m/Y" }}</p>
+                            </div>
+                            <div class="col-md-2">
+                                {% if task.status == 'inprogress' %}
+                                    <span class="badge badge-info">{{ task.get_status_display }}</span>
+                                {% elif task.status == 'todo' %}
+                                    <span class="badge badge-warning">{{ task.get_status_display }}</span>
+                                {% elif task.status == 'unassigned' %}
+                                    <span class="badge badge-danger">{{ task.get_status_display }}</span>
+                                {% elif task.status == 'completed' %}
+                                    <span class="badge badge-success">{{ task.get_status_display }}</span>
+                                {% else %}
+                                    <span class="badge badge-warning">{{ task.get_status_display }}</span>
+                                {% endif %}
+                            </div>
+                            <div class="col-md-1 text-right">
+                                <a href="{% url 'employee:task_detail' task_id=task.id %}" class="btn btn-outline-light btn-sm mr-2">
+                                    <i class="fas fa-angle-double-right fa-3x"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 {% empty %}
-                <tr>
-                    <td colspan="6">No tasks assigned to you.</td>
-                </tr>
+                <div class="alert alert-info" role="alert">
+                    No tasks assigned to you.
+                </div>
                 {% endfor %}
-            </tbody>
-        </table>
+            {% else %}
+            <div class="alert alert-info" role="alert">
+                No tasks assigned to you.
+            </div>
+            {% endif %}
+        </div>
     </div>
 </div>
 {% endblock %}
@@ -83,7 +96,6 @@
 <script>
 document.addEventListener('DOMContentLoaded', function() {
     const searchQueryInput = document.getElementById('search-query');
-    const filterForm = document.getElementById('filter-form');
 
     searchQueryInput.addEventListener('input', function(event) {
         const searchQuery = event.target.value.trim().toLowerCase();
@@ -91,15 +103,16 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     function filterTasks(searchQuery) {
-        const rows = document.querySelectorAll('#task-table-body tr');
-        rows.forEach(row => {
-            const taskTitle = row.querySelector('td:nth-child(1)').textContent.toLowerCase();
-            const clientName = row.querySelector('td:nth-child(2)').textContent.toLowerCase();
+        const cards = document.querySelectorAll('.card'); // Targeting the card elements
 
-            if (taskTitle.includes(searchQuery) || clientName.includes(searchQuery)) {
-                row.style.display = '';
+        cards.forEach(card => {
+            const taskTitle = card.querySelector('.card-title').textContent.toLowerCase();
+            const projectName = card.querySelector('.card-text small').textContent.toLowerCase(); // Adjusted to target project name
+
+            if (taskTitle.includes(searchQuery) || projectName.includes(searchQuery)) {
+                card.style.display = '';
             } else {
-                row.style.display = 'none';
+                card.style.display = 'none';
             }
         });
     }

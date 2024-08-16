@@ -28,23 +28,30 @@
                                 <div class="form-group">
                                     <label for="{{ form.title.id_for_label }}">Title</label>
                                     {{ form.title|add_class:"form-control form-control-sm" }}
-                                    {{ form.title.errors }}
+                                    <div class="text-danger small form-error" id="error-title"></div> 
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="{{ form.project.id_for_label }}">Project</label>
                                     {{ form.project|add_class:"form-control form-control-sm" }}
-                                    {{ form.project.errors }}
+                                    <div class="text-danger small form-error" id="error-project"></div>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
                                     <label for="{{ form.employee.id_for_label }}">Assigned To</label>
-                                    {{ form.employee|add_class:"form-control form-control-sm" }}
-                                    {{ form.employee.errors }}
+                                    <select name="employee" id="{{ form.employee.id_for_label }}" class="form-control form-control-sm">
+                                        {% for employee in employees %}
+                                        <option value="{{ employee.id }}" {% if task.employee and task.employee.id == employee.id %}selected{% endif %}>
+                                            {{ employee.first_name }} {{ employee.last_name }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                    <div class="text-danger small form-error" id="error-employee"></div>
                                 </div>
                             </div>
+                            
                         </div>
                       
                         <div class="row">
@@ -52,21 +59,21 @@
                                 <div class="form-group">
                                     <label for="{{ form.status.id_for_label }}">Status</label>
                                     {{ form.status|add_class:"form-control form-control-sm" }}
-                                    {{ form.status.errors }}
+                                    <div class="text-danger small form-error" id="error-status"></div>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
                                     <label for="{{ form.due_date.id_for_label }}">Due Date</label>
                                     {{ form.due_date|add_class:"form-control form-control-sm" }}
-                                    {{ form.due_date.errors }}
+                                    <div class="text-danger small form-error" id="error-due-date"></div>
                                 </div>
                             </div>
                             <div class="col-md-3">
                                 <div class="form-group">
-                                    <label for="{{ form.priority.id_for_label }}">priority</label>
+                                    <label for="{{ form.priority.id_for_label }}">Priority</label>
                                     {{ form.priority|add_class:"form-control form-control-sm" }}
-                                    {{ form.priority.errors }}
+                                    <div class="text-danger small form-error" id="error-priority"></div>
                                 </div>
                             </div>
                             
@@ -76,10 +83,10 @@
                                     <select name="board" id="{{ form.board.id_for_label }}"
                                         class="form-control form-control-sm">
                                         {% for b in boards %}
-        <option value="{{ b.id }}" {% if form.initial.board == b.id %}selected{% endif %}>{{ b.name }}</option>
-    {% endfor %}
+                                        <option value="{{ b.id }}" {% if form.initial.board == b.id %}selected{% endif %}>{{ b.name }}</option>
+                                        {% endfor %}
                                     </select>
-                                    {{ form.board.errors }}
+                                    <div class="text-danger small form-error" id="error-board"></div>
                                 </div>
                             </div>
                         </div>
@@ -88,7 +95,7 @@
                                 <div class="form-group">
                                     <label for="{{ form.description.id_for_label }}">Description</label>
                                     {{ form.description|add_class:"form-control form-control-sm" }}
-                                    {{ form.description.errors }}
+                                    <div class="text-danger small form-error" id="error-description"></div>
                                 </div>
                             </div>
                         </div>
@@ -100,7 +107,7 @@
                                     <input name="attachment" type="file" multiple />
                                 </div>
                             </div>
-                            {{ form.attachment.errors }}
+                            <div class="text-danger small form-error" id="error-attachment"></div>
                         </div>
                     </div>
                     <div class="card-footer text-right">
@@ -115,27 +122,65 @@
 {% block extra_scripts %}
 <!-- Main content will be injected here -->
 <script>
-    $(document).ready(function () {
-        // Initialize Dropzone
-        Dropzone.autoDiscover = false;
-        var myDropzone = new Dropzone("#attachment-dropzone", {
-            url: "{% url 'superadmin:create_task' %}",  // URL to handle file upload
-            paramName: "attachment",  // Name of the parameter that will contain the file
-            maxFilesize: 5,  // Max file size in MB
-            addRemoveLinks: true,  // Add remove links for uploaded files
-            dictDefaultMessage: "Drag and drop files here or click to upload",
-            dictRemoveFile: "Remove",
-            // Optional: Handle success and error events
-            success: function (file, response) {
-                // Handle success
-                console.log(response);
-            },
-            error: function (file, response) {
-                // Handle error
-                console.error(response);
-            }
-        });
+  $(document).ready(function () {
+     // Handle project change
+    $('#id_project').change(function() {
+    var projectId = $(this).val();
+    var url = '{% url "superadmin:fetch_employees" %}';  // URL to fetch employees based on the selected project
+
+    $.ajax({
+        url: url,
+        data: {
+            'project_id': projectId
+        },
+        success: function(data) {
+            $('#id_employee').empty();  // Clear the employee dropdown
+            $.each(data.employees, function(index, employee) {
+                $('#id_employee').append('<option value="' + employee.id + '">' + employee.first_name + ' ' + employee.last_name + '</option>');
+            });
+        },
+        error: function(xhr, status, error) {
+            console.error("Error fetching employees", error);
+        }
     });
+});
+    // Initialize Dropzone
+    Dropzone.autoDiscover = false;
+    var myDropzone = new Dropzone("#attachment-dropzone", {
+        url: "{% url 'superadmin:update_task' task.id %}",  // URL to handle file upload
+        paramName: "attachment",  // Name of the parameter that will contain the file
+        maxFilesize: 5,  // Max file size in MB
+        addRemoveLinks: true,  // Add remove links for uploaded files
+        dictDefaultMessage: "Drag and drop files here or click to upload",
+        dictRemoveFile: "Remove",
+        // Optional: Handle success and error events
+        success: function (file, response) {
+            console.log("File uploaded successfully", response);
+        },
+        error: function (file, response) {
+            console.error("Error uploading file", response);
+        },
+        complete: function (file) {
+            if (file.xhr && file.xhr.status === 400) {
+                var response = JSON.parse(file.xhr.responseText);
+                if (!response.success) {
+                    // Clear previous errors
+                    $('.form-error').html('');
+                    
+                    // Display new errors
+                    $.each(response.errors, function (field, fieldErrors) {
+                        var $errorDiv = $('#error-' + field);
+                        if ($errorDiv.length === 0) {
+                            $errorDiv = $('<div class="form-error text-danger"></div>');
+                            $errorDiv.insertAfter('#id_' + field);
+                        }
+                        $errorDiv.html(fieldErrors.map(error => error.message).join('<br>'));
+                    });
+                }
+            }
+        }
+    });
+
+});
 </script>
-{% endblock extra_scripts %}
-<!-- Main content will be injected here -->
+{% endblock %}

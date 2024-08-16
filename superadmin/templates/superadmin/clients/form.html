@@ -119,7 +119,7 @@
     var dropzone = new Dropzone("#dropzone", {
         url: "{% url 'superadmin:upload_client_images' %}",
         paramName: "file",
-        maxFilesize: 2,
+        maxFilesize: false,
         addRemoveLinks: true,
         dictDefaultMessage: "Drag files here or click to upload",
         autoProcessQueue: false,

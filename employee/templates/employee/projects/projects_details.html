@@ -111,7 +111,7 @@
         <div class="card-footer bg-light">
             <h5>Tasks</h5>
             <div class="table-responsive">
-                <table class="table">
+                <table class="table kanban-task {{ task.status }}">
                     <thead class="table-light">
                         <tr>
                             <th>Title</th>
@@ -137,10 +137,16 @@
                             </td>
                             <td>
                                 {% if task.status == 'inprogress' %}
-                                    <span class="badge badge-warning">{{ task.get_status_display }}</span>
-                                {% else %}
-                                    <span class="badge badge-success">{{ task.get_status_display }}</span>
-                                {% endif %}
+                                <span class="badge badge-info">{{ task.get_status_display }}</span>
+                            {% elif task.status == 'todo' %}
+                                <span class="badge badge-warning">{{ task.get_status_display }}</span>
+                            {% elif task.status == 'unassigned' %}
+                                <span class="badge badge-danger">{{ task.get_status_display }}</span>
+                            {% elif task.status == 'completed' %}
+                                <span class="badge badge-success">{{ task.get_status_display }}</span>
+                            {% else %}
+                                <span class="badge badge-warning">{{ task.get_status_display }}</span>
+                            {% endif %}
                             </td>
                             <td>{{ task.description }}</td>
                             <td>{{ task.due_date|date:"d/m/Y" }}</td>

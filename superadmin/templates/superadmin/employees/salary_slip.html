@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load custom_filters %}
+{% load static %}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -57,7 +58,7 @@
         <div class="header">
             <div class="header-container">
                 <div class="logo">
-                    <img src="C:\Users\Paraj\coderscotchCRM\coderscotchCRM\superadmin\static\myapp\img\logo.png" alt="Coderscotch Logo" style="width: 200px;">
+                    <img src="media\file.jpg" alt="Coderscotch Logo" style="width: 200px;">
                 </div>
                 
                 
@@ -81,19 +82,19 @@
             </tr>
             <tr>
                 <td>Basic Salary</td>
-                <td class="a">{{ salary_slip.employee.salary }}</td>
+                <td class="a">{{ salary_slip.employee.salary }}$</td>
             </tr>
             <tr>
                 <td>Professional Tax</td>
-                <td class="a">{{ salary_slip.professional_tax }}</td>
+                <td class="a">{{ salary_slip.professional_tax }}%</td>
             </tr>
             <tr>
                 <td>TDS</td>
-                <td class="a">{{ salary_slip.TDS }}</td>
+                <td class="a">{{ salary_slip.TDS }}%</td>
             </tr>
             <tr>
                 <td>Leave Deduction</td>
-                <td class="a">{{ salary_slip.leave_deduction }}</td>
+                <td class="a">{{ salary_slip.leave_deduction }}$</td>
             </tr>
             <tr class="total">
                 <td>Total Salary</td>

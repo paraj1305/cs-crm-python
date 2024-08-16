@@ -24,8 +24,7 @@ def employee_tasks(request):
         tasks = tasks.filter(status=status_filter)
     
     clients = Client.objects.all()
- 
-    
+
     context = {
         'tasks': tasks,
         'search_query': search_query,
@@ -33,7 +32,7 @@ def employee_tasks(request):
         'status_filter': status_filter,
         'priorities': Task.PRIORITY_CHOICES,
         'statuses': Task.STATUS_CHOICES,
-        'clients':clients,
+        'clients': clients,
     }
     return render(request, 'employee/tasks/tasks.html', context)
 

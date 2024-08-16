@@ -1,8 +1,10 @@
 # employee/urls.py
 from django.urls import path
-from .views.authentication.loginviews import employee_login, home_view, employee_logout, employee_password_reset,project_list,projects
+from .views.authentication.loginviews import employee_login, home_view, employee_logout, employee_password_reset
 from .views.taskviews import employee_tasks,task_detail
 from .views.leaveviews import apply_leave,leaves
+from .views.projectviews import project_list,projects
+    
 app_name = 'employee'
 urlpatterns = [
 
@@ -11,6 +13,7 @@ urlpatterns = [
     path('home/', home_view, name='home_view'),
     path('reset-password/', employee_password_reset, name='employee_password_reset'),
     path('logout/', employee_logout, name='employee_logout'),
+    
 
     #projects urls
     path('project/', project_list, name='project_list'),

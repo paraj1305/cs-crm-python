@@ -105,58 +105,116 @@
                 </div>
                 
                 
-                <div class="card-body">
-                  <div class="card-footer">
-                    <div class="row">
+                <div class="card-footer bg-light text-dark">
+                  <div class="row">
                       <div class="col-sm-3 col-6">
-                        <div class="description-block border-right">
-                          <span class="description-percentage text-success">
-                            <i class="fas fa-caret-up"></i> 0%
-                          </span>
-                          <h5 class="description-header">${{ total_revenue|floatformat:2 }}</h5>
-                          <span class="description-text">TOTAL REVENUE</span>
-                        </div>
+                          <div class="description-block border-right text-dark p-3 rounded"  style="background-color:rgba(75, 192, 192, 0.2)">
+                              <h5 class="description-header">${{ total_revenue|floatformat:2 }}</h5>
+                              <span class="description-text">TOTAL REVENUE</span>
+                          </div>
                       </div>
                       <div class="col-sm-3 col-6">
-                        <div class="description-block border-right">
-                          <span class="description-percentage text-warning">
-                            <i class="fas fa-caret-left"></i> 0%
-                          </span>
-                          <h5 class="description-header">${{ total_cost }}</h5>
-                          <span class="description-text">TOTAL COST</span>
-                        </div>
+                          <div class="description-block border-right text-dark p-3 rounded" style="background-color:rgba(255, 99, 132, 0.2)">
+                              <h5 class="description-header">${{ total_cost }}</h5>
+                              <span class="description-text">TOTAL COST</span>
+                          </div>
                       </div>
                       <div class="col-sm-3 col-6">
-                        <div class="description-block border-right">
-                          <span class="description-percentage text-success">
-                            <i class="fas fa-caret-up"></i> 0%
-                          </span>
-                          <h5 class="description-header">${{ total_profit|floatformat:2 }}</h5>
-                          <span class="description-text">TOTAL PROFIT</span>
-                        </div>
+                          <div class="description-block border-right  text-dark p-3 rounded" style="background-color:rgba(54, 162, 235, 0.2)">
+                              <h5 class="description-header">${{ total_profit|floatformat:2 }}</h5>
+                              <span class="description-text">TOTAL PROFIT</span>
+                          </div>
                       </div>
                       <div class="col-sm-3 col-6">
-                        <div class="description-block">
-                          <span class="description-percentage text-danger">
-                            <i class="fas fa-caret-down"></i> 0%
-                          </span>
-                          <h5 class="description-header">$100000</h5>
-                            <span class="description-text"> GOAL COMPLETIONS</span>
-                        </div>
+                          <div class="description-block text-light text-dark p-3 rounded"  style="background-color:rgba(255, 206, 86, 0.2)">
+                              <h5 class="description-header">$100000</h5>
+                              <span class="description-text">GOAL COMPLETIONS</span>
+                          </div>
                       </div>
-                    </div>
                   </div>
-                </div>
+              </div>
+
               </div>
             </div>
           </div>
+         
+          
+   
+          <div class="card mt-4">
+            <div class="card-header d-flex align-items-center">
+                <h5 class="card-title mb-0 mr-auto">Invoice Summary</h5>
+                <form method="get" class="form-inline">
+                    <div class="form-group mr-3">
+                        <label for="year2" class="mr-2">Year:</label>
+                        <select name="year2" id="year2" class="form-control">
+                            <option value="">Select Year</option>
+                            {% for y in years %}
+                                <option value="{{ y }}" {% if y == year %}selected{% endif %}>{{ y }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="form-group mr-3">
+                        <label for="month2" class="mr-2">Month:</label>
+                        <select name="month2" id="month2" class="form-control">
+                            <option value="">Select Month</option>
+                            {% for m in months %}
+                                <option value="{{ m.value }}" {% if m.value == month %}selected{% endif %}>{{ m.name }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                </form>
+            </div>
+            <div class="card-body">
+                <canvas id="secondChart" width="400" height="100"></canvas>
+            </div>
+            <div class="card-footer bg-light text-dark">
+              <div class="row">
+                <!-- Paid Invoices and Amount -->
+                <div class="col-sm-6 col-12">
+                    <div class="description-block border-right text-dark p-3 rounded d-flex justify-content-between" style="background-color:rgba(75, 192, 192, 0.2)">
+                        <!-- Paid Invoices -->
+                        <div class="text-center">
+                            <h5 class="description-header">{{ second_chart_data.paid_count }}</h5>
+                            <span class="description-text">Total Paid Invoices</span>
+                        </div>
+                        <!-- Paid Amount -->
+                        <div class="text-center">
+                            <h5 class="description-header">${{ second_chart_data.paid_total|floatformat:2 }}</h5>
+                            <span class="description-text">Total Paid Amount</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Unpaid Invoices and Amount -->
+                <div class="col-sm-6 col-12">
+                    <div class="description-block border-right text-dark p-3 rounded d-flex justify-content-between" style="background-color:rgba(255, 99, 132, 0.2)">
+                        <!-- Unpaid Invoices -->
+                        <div class="text-center">
+                            <h5 class="description-header">{{ second_chart_data.unpaid_count }}</h5>
+                            <span class="description-text">Total Unpaid Invoices</span>
+                        </div>
+                        <!-- Unpaid Amount -->
+                        <div class="text-center">
+                            <h5 class="description-header">${{ second_chart_data.unpaid_total|floatformat:2 }}</h5>
+                            <span class="description-text">Total Unpaid Amount</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+          </div>
+        </div>
+        
+        
+        
 
           <div class="row mt-2">
             <!-- Projects Near Deadline Section -->
             <div class="col-md-6 mb-2">
                 <div class="nearest-deadline-projects card">
                   <div class="card-header d-flex align-items-center" style="background-color: #f8d7da; color:#721c24;">
-                    <h3 class="card-title mb-0">Projects Near Deadline</h3>
+                    <h3 class="card-title mb-0">Projects Nearing Deadline</h3>
                     <div class="ml-auto">
                         <button type="button" class="btn btn-tool" data-card-widget="collapse">
                             <i class="fas fa-minus"></i>
@@ -166,12 +224,14 @@
                         </button>
                     </div>
                 </div>
+                
                 <div class="card-body">
                   <table class="table table-borderless">
                       <tbody>
                           {% for project in nearest_deadline_projects %}
                               <tr>
                                   <td>{{ project.project_title }}</td>
+                                  <td>{{project.client}}</td>
                                   <td class="text-right"><span class="badge badge-danger">{{ project.deadline }}</span></td>
                               </tr>
                           {% endfor %}
@@ -231,7 +291,7 @@
           <div class="col-md-6 mb-2">
               <div class="last-tasks card">
                 <div class="card-header d-flex align-items-center" style="background-color: #e0f7fa; color: #00796b;">
-                      <h3 class="card-title mb-0">Last 3 Tasks</h3>
+                      <h3 class="card-title mb-0">Tasks Nearing Deadline</h3>
                       <div class="ml-auto">
                           <button type="button" class="btn btn-tool" data-card-widget="collapse">
                               <i class="fas fa-minus"></i>
@@ -316,6 +376,7 @@
   });
 
 
+
   // chart
   const chartData = JSON.parse('{{ chart_data|escapejs }}');
     let chartType = '{{ chart_type|escapejs }}';  // Initial chart type from the server
@@ -351,5 +412,29 @@
             }
         });
     });
+
+    document.querySelectorAll('select[name="year2"], select[name="month2"]').forEach(element => {
+    element.addEventListener('change', function() {
+      this.form.submit();
+    });
+  });
+    
+  // Second Chart: Paid and Unpaid Invoices per Client
+  const secondChartData = JSON.parse('{{ second_chart_data|escapejs }}');
+    var ctx2 = document.getElementById('secondChart').getContext('2d');
+    new Chart(ctx2, {
+        type: 'bar',
+        data: secondChartData,
+        options: {
+            responsive: true,
+            scales: {
+                y: {
+                    beginAtZero: true
+                }
+            }
+        }
+    });
+    
 </script>
+
 {% endblock extra_scripts %}

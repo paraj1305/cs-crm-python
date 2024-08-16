@@ -41,14 +41,14 @@
                         <div class="row">
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="{{ form.professional_tax.id_for_label }}">Professional Tax</label>
+                                    <label for="{{ form.professional_tax.id_for_label }}">Professional Tax(%)</label>
                                     {{ form.professional_tax|add_class:"form-control form-control-sm" }}
                                     <div class="text-danger small" id="error-professional_tax"></div>
                                 </div>
                             </div>
                             <div class="col-md-4">
                                 <div class="form-group">
-                                    <label for="{{ form.TDS.id_for_label }}">TDS</label>
+                                    <label for="{{ form.TDS.id_for_label }}">TDS(%)</label>
                                     {{ form.TDS|add_class:"form-control form-control-sm" }}
                                     <div class="text-danger small" id="error-TDS"></div>
                                 </div>
@@ -97,10 +97,10 @@
                                 <tr>
                                     <td>{{ slip.month |month_name   }} {{slip.year}} </td>
                                    
-                                    <td>{{ slip.professional_tax }}</td>
-                                    <td>{{ slip.TDS }}</td>
-                                    <td>{{ slip.leave_deduction }}</td>
-                                    <td>{{ slip.total_salary }}</td>
+                                    <td>{{ slip.professional_tax }}%</td>
+                                    <td>{{ slip.TDS }}%</td>
+                                    <td>{{ slip.leave_deduction }}$</td>
+                                    <td>{{ slip.total_salary }}$</td>
                                     <td>
                                         <a href="{% url 'superadmin:update_salary_slip' slip.id %}" class="text-primary" title="Update">
                                             <i class="fas fa-edit"></i>

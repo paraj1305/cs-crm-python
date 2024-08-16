@@ -44,7 +44,7 @@ INSTALLED_APPS = [
     'django_countries',
     'crispy_forms',
     'crispy_bootstrap4',
-    'CoderscotchCRM'
+    'CoderscotchCRM',
 ]
 CRISPY_TEMPLATE_PACK = 'bootstrap4'
 
@@ -239,3 +239,7 @@ MESSAGE_TAGS = {
 # settings.py
 USE_TZ = True  # Ensure that timezone support is enabled
 TIME_ZONE = 'UTC'  # or any other timezone, e.g., 'America/New_York'
+
+DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+

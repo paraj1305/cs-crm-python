@@ -1,0 +1,153 @@
+Coder Scotch CRM
+
+Client
+
+       Projects
+
+                     Tasks
+
+                                   Team members
+
+                     Invoices
+
+                     Change requests
+
+ 
+
+1.       Clients Management - Add/Edit/Delete/List
+
+a.       Client Name
+
+b.       Email
+
+c.       Phone
+
+d.       Location (Country Dropdown)
+
+e.       Industry Type (DropDown)
+
+f.        Website
+
+g.       Since (Year Dropdown)
+
+2.       Team Members management – Add/Edit/Delete/List – When new user will be created, send login 
+
+a.       Name
+
+b.       Email
+
+c.       Designation
+
+d.       Photo
+
+3.       details to user via email.
+
+a.       Leaves Management - View/List
+
+                                                             i.      Total leaves
+
+                                                            ii.      Used Leaves
+
+                                                          iii.      Remaining Leaves
+
+b.       Apply Leave
+
+                                                             i.      Leave Date – Multi select if multiple leaves
+
+                                                            ii.      Leave reason
+
+                                                          iii.      One day or multiple leaves? (Radio buttons)
+
+c.       Salary Slips Management – View/List
+
+4.       Tasks Management – Add/Edit/Delete/List
+
+a.       Task Title
+
+b.       Select Project
+
+c.       Description
+
+d.       Due Date
+
+e.       Attachment
+
+f.        User (DropDown)
+
+g.       Priority
+
+h.       Status
+
+5.       Projects Management – Add/Edit/Delete/List
+
+a.       Project Name
+
+b.       Client Name
+
+c.       Project Rate
+
+d.       Project Type
+
+e.       Priority
+
+f.        Project Size
+
+g.       Start Date
+
+h.       End Date
+
+i.         Project Files
+
+j.         Project Cost
+
+k.       Change Requests
+
+                                                             i.      Add Task
+
+                                                            ii.      Add hours
+
+                                                          iii.      Calculate cost automatically
+
+6.       Invoices Management – Add/Edit/Delete/List
+
+a.       Select Company
+
+b.       Invoice Date
+
+c.       Add items
+
+                                                             i.      Title
+
+                                                            ii.      Amount
+
+d.       Send invoice to client automatically
+
+7.       Leads Management – Add/Edit/Delete/List
+
+a.       Project Name
+
+b.       Budget
+
+c.       Description
+
+d.       Documents
+
+e.       Project Type
+
+f.        Timeline
+
+8.       Dashboard
+
+a.       No of clients
+
+b.       No of projects
+
+c.       Revenue Per month
+
+d.       Annual Revenue
+
+e.       Annual Profit
+
+f.        No of Team Members
+
+g.       New Leads

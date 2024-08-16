@@ -2,14 +2,52 @@
 <!DOCTYPE html>
 {% extends 'superadmin/base.html' %}
 {% load custom_filters %}
+   
+{% block extra_styles %}
+<!-- Additional styles can be added here -->
+<style>
+    .profile-pic-container {
+        position: relative;
+        display: inline-block;
+    }
+
+    .profile-pic {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 50%;
+    }
+
+    .edit-icon {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    color: #ffffffcc; /* Slightly more opaque white for better visibility */
+    background-color: rgba(0, 0, 0, 0.6); /* Darker background to enhance contrast */
+    border-radius: 50%; /* Ensures the icon is perfectly rounded */
+  
+    display: flex; /* Centers the icon within the circle */
+    align-items: center; /* Centers the icon vertically */
+    justify-content: center; /* Centers the icon horizontally */
+    cursor: pointer;
+    opacity: 0; /* Make the icon invisible by default */
+    transition: opacity 0.3s; /* Smooth transition for visibility change */
+}
+
+.profile-pic-container:hover .edit-icon {
+    opacity: 1; /* Make the icon visible on hover */
+}
+</style>
+{% endblock extra_styles %}
 
 {% block content %}
 <div class="container mt-5">
     <div class="row justify-content-center">
-        <div class="col-md-8">
+        <div class="col-md-10">
             <div class="card">
-                <div class="card-header bg-secondary text-white">
-                    <h3 class="card-title text-center">{{ form.instance.pk|yesno:"Update Superadmin,Create Superadmin" }}</h3>
+                <div class="card-header bg-secondary text-white text-center">
+                    <h3 class="card-title">{{ form.instance.pk|yesno:"Update Superadmin,Create Superadmin" }}</h3>
                 </div>
 
                 {% if messages %}
@@ -23,51 +61,74 @@
                 <form method="post" enctype="multipart/form-data">
                     {% csrf_token %}
                     <div class="card-body">
-                        <div class="form-group">
-                            <label for="id_email">Email:</label>
-                            {{ form.email|add_class:"form-control" }}
-                            {{ form.email.errors }}
+                        <div class="form-group text-center">
+                            <div class="profile-pic-container">
+                                {% if form.logo.value %}
+                                    <img src="{{ form.logo.value.url }}" alt="Profile Picture" id="logo-preview" class="profile-pic">
+                                {% else %}
+                                    <img src="https://via.placeholder.com/150" alt="Default Profile Picture" id="logo-preview" class="profile-pic">
+                                {% endif %}
+                                <button type="button" id="change-logo-btn" class="edit-icon">
+                                    <i class="fas fa-camera fa-2x"></i>
+                             
+                                </button>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="id_company_name">Company Name:</label>
-                            {{ form.company_name|add_class:"form-control" }}
-                            {{ form.company_name.errors }}
+
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="id_email">Email:</label>
+                                    {{ form.email|add_class:"form-control" }}
+                                    {{ form.email.errors }}
+                                </div>
+                                <div class="form-group">
+                                    <label for="id_bank_no">Bank Number:</label>
+                                    {{ form.bank_no|add_class:"form-control" }}
+                                    {{ form.bank_no.errors }}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="id_company_name">Company Name:</label>
+                                    {{ form.company_name|add_class:"form-control" }}
+                                    {{ form.company_name.errors }}
+                                </div>
+                                <div class="form-group">
+                                    <label for="id_SWIFT_CODE">SWIFT Code:</label>
+                                    {{ form.SWIFT_CODE|add_class:"form-control" }}
+                                    {{ form.SWIFT_CODE.errors }}
+                                </div>
+                            </div>
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="id_bank">Bank:</label>
+                                    {{ form.bank|add_class:"form-control" }}
+                                    {{ form.bank.errors }}
+                                </div>
+                                <div class="form-group">
+                                    <label for="id_IFSC_CODE">IFSC Code:</label>
+                                    {{ form.IFSC_CODE|add_class:"form-control" }}
+                                    {{ form.IFSC_CODE.errors }}
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="id_website">Website:</label>
+                                    {{ form.website|add_class:"form-control" }}
+                                    {{ form.website.errors }}
+                                </div>
+                            </div>
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="id_address">Address:</label>
+                                    {{ form.address|add_class:"form-control" }}
+                                    {{ form.address.errors }}
+                                </div>
+                            </div>
                         </div>
-                        <div class="form-group">
-                            <label for="id_bank">Bank:</label>
-                            {{ form.bank|add_class:"form-control" }}
-                            {{ form.bank.errors }}
-                        </div>
-                        <div class="form-group">
-                            <label for="id_bank_no">Bank Number:</label>
-                            {{ form.bank_no|add_class:"form-control" }}
-                            {{ form.bank_no.errors }}
-                        </div>
-                        <div class="form-group">
-                            <label for="id_SWIFT_CODE">SWIFT Code:</label>
-                            {{ form.SWIFT_CODE|add_class:"form-control" }}
-                            {{ form.SWIFT_CODE.errors }}
-                        </div>
-                        <div class="form-group">
-                            <label for="id_IFSC_CODE">IFSC Code:</label>
-                            {{ form.IFSC_CODE|add_class:"form-control" }}
-                            {{ form.IFSC_CODE.errors }}
-                        </div>
-                        <div class="form-group">
-                            <label for="id_logo">Logo:</label>
-                            {{ form.logo|add_class:"form-control-file" }}
-                            {{ form.logo.errors }}
-                        </div>
-                        <div class="form-group">
-                            <label for="id_website">Website:</label>
-                            {{ form.website|add_class:"form-control" }}
-                            {{ form.website.errors }}
-                        </div>
-                        <div class="form-group">
-                            <label for="id_address">Address:</label>
-                            {{ form.address|add_class:"form-control" }}
-                            {{ form.address.errors }}
-                        </div>
+                        <!-- Hidden file input field -->
+                        <input type="file" id="id_logo" name="logo" style="display: none;">
                     </div>
                     <div class="card-footer text-right">
                         <button type="submit" class="btn btn-primary">Submit</button>
@@ -82,6 +143,21 @@
 
 {% block extra_scripts %}
 <script>
-    // Optionally, you can add any custom scripts here if needed
+    document.getElementById("id_logo").addEventListener("change", function(event) {
+        const [file] = event.target.files;
+        if (file) {
+            const logoPreview = document.getElementById("logo-preview");
+            logoPreview.src = URL.createObjectURL(file);
+            
+            // Clean up the object URL after the image is loaded
+            logoPreview.onload = function() {
+                URL.revokeObjectURL(logoPreview.src);
+            };
+        }
+    });
+
+    document.getElementById("change-logo-btn").addEventListener("click", function() {
+        document.getElementById("id_logo").click();
+    });
 </script>
 {% endblock extra_scripts %}
