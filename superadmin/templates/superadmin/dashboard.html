@@ -144,43 +144,44 @@
             <div class="card-header d-flex align-items-center">
                 <h5 class="card-title mb-0 mr-auto">Invoice Summary</h5>
                 <form method="get" class="form-inline">
-                    <div class="form-group mr-3">
-                        <label for="year2" class="mr-2">Year:</label>
-                        <select name="year2" id="year2" class="form-control">
-                            <option value="">Select Year</option>
-                            {% for y in years %}
-                                <option value="{{ y }}" {% if y == year %}selected{% endif %}>{{ y }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <div class="form-group mr-3">
-                        <label for="month2" class="mr-2">Month:</label>
-                        <select name="month2" id="month2" class="form-control">
-                            <option value="">Select Month</option>
-                            {% for m in months %}
-                                <option value="{{ m.value }}" {% if m.value == month %}selected{% endif %}>{{ m.name }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                    <button type="submit" class="btn btn-primary">Filter</button>
-                </form>
+                  <div class="form-group mr-3">
+                      <label for="year2" class="mr-2">Year:</label>
+                      <select name="year2" id="year2" class="form-control">
+                          <option value="">Select Year</option>
+                          {% for y in years %}
+                              <option value="{{ y }}" {% if y == request.GET.year2 %}selected{% endif %}>{{ y }}</option>
+                          {% endfor %}
+                      </select>
+                  </div>
+                  <div class="form-group mr-3">
+                      <label for="month2" class="mr-2">Month:</label>
+                      <select name="month2" id="month2" class="form-control">
+                          <option value="">Select Month</option>
+                          {% for m in months %}
+                              <option value="{{ m.value }}" {% if m.value == request.GET.month2 %}selected{% endif %}>{{ m.name }}</option>
+                          {% endfor %}
+                      </select>
+                  </div>
+                  <button type="submit" class="btn btn-primary">Filter</button>
+              </form>
+              
             </div>
             <div class="card-body">
                 <canvas id="secondChart" width="400" height="100"></canvas>
             </div>
+              
             <div class="card-footer bg-light text-dark">
               <div class="row">
-                <!-- Paid Invoices and Amount -->
                 <div class="col-sm-6 col-12">
                     <div class="description-block border-right text-dark p-3 rounded d-flex justify-content-between" style="background-color:rgba(75, 192, 192, 0.2)">
                         <!-- Paid Invoices -->
                         <div class="text-center">
-                            <h5 class="description-header">{{ second_chart_data.paid_count }}</h5>
+                            <h5 class="description-header">{{ paid_invoices_count }}</h5>
                             <span class="description-text">Total Paid Invoices</span>
                         </div>
                         <!-- Paid Amount -->
                         <div class="text-center">
-                            <h5 class="description-header">${{ second_chart_data.paid_total|floatformat:2 }}</h5>
+                            <h5 class="description-header">${{ paid_invoices_amount|floatformat:2 }}</h5>
                             <span class="description-text">Total Paid Amount</span>
                         </div>
                     </div>
@@ -191,20 +192,23 @@
                     <div class="description-block border-right text-dark p-3 rounded d-flex justify-content-between" style="background-color:rgba(255, 99, 132, 0.2)">
                         <!-- Unpaid Invoices -->
                         <div class="text-center">
-                            <h5 class="description-header">{{ second_chart_data.unpaid_count }}</h5>
+                            <h5 class="description-header">{{ unpaid_invoices_count }}</h5>
                             <span class="description-text">Total Unpaid Invoices</span>
                         </div>
                         <!-- Unpaid Amount -->
                         <div class="text-center">
-                            <h5 class="description-header">${{ second_chart_data.unpaid_total|floatformat:2 }}</h5>
+                            <h5 class="description-header">${{ unpaid_invoices_amount|floatformat:2 }}</h5>
                             <span class="description-text">Total Unpaid Amount</span>
                         </div>
                     </div>
                 </div>
             </div>
             
+            
           </div>
         </div>
+        
+
         
         
         
@@ -413,14 +417,16 @@
         });
     });
 
-    document.querySelectorAll('select[name="year2"], select[name="month2"]').forEach(element => {
+
+  document.querySelectorAll('select[name="year2"], select[name="month2"]').forEach(element => {
     element.addEventListener('change', function() {
-      this.form.submit();
+        this.form.submit();
     });
-  });
-    
+});
+
   // Second Chart: Paid and Unpaid Invoices per Client
   const secondChartData = JSON.parse('{{ second_chart_data|escapejs }}');
+  
     var ctx2 = document.getElementById('secondChart').getContext('2d');
     new Chart(ctx2, {
         type: 'bar',

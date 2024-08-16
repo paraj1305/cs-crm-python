@@ -14,8 +14,8 @@ from django.db.models import Sum, F,Q,Count, ExpressionWrapper, DecimalField
 from django.contrib.auth import authenticate, login
 from django.utils.timezone import now
 import json
-
-
+from datetime import datetime
+from django import forms
 
 def login_view(request):
     form = LoginForm(request.POST or None)
@@ -139,8 +139,6 @@ def get_total_cost_and_salary(year=None, month=None):
     except Exception as e:
         print(f"Error calculating total cost and salary: {e}")
         return 0, 0
-
-
 import json
 
 def generate_chart_data(year=None, month=None):
@@ -246,38 +244,47 @@ def generate_chart_data(year=None, month=None):
 
 
 def get_second_chart_data(year2=None, month2=None):
-    # Filter by year and month if provided
-    # Ensure the filter conditions are correctly set
+    # Define filter conditions
     filter_conditions = {}
     if year2:
         filter_conditions['invoice_date__year'] = year2
     if month2:
         filter_conditions['invoice_date__month'] = month2
 
-
-    # Query to sum the total amount of paid and unpaid invoices per client
-    second_chart_data = (
-        Invoice.objects
-        .filter(**filter_conditions)
-        .values('client__name')
-        .annotate(
-            paid_total=Sum(
-                F('items__rate') * (1 + F('tax_percentage') / 100),
-                filter=Q(payment_status='paid')
-            ),
-            unpaid_total=Sum(
-                F('items__rate') * (1 + F('tax_percentage') / 100),
-                filter=Q(payment_status='unpaid')
+        # Query the database for invoice data
+    try:
+        second_chart_data = (
+            Invoice.objects
+            .filter(**filter_conditions)
+            .values('client__name')
+            .annotate(
+                paid_total=Sum(
+                    F('items__rate') * (1 + F('tax_percentage') / 100),
+                    filter=Q(payment_status='paid')
+                ),
+                unpaid_total=Sum(
+                    F('items__rate') * (1 + F('tax_percentage') / 100),
+                    filter=Q(payment_status='unpaid')
+                ),
+                paid_count=Count('id', distinct=True, filter=Q(payment_status='paid')),
+                unpaid_count=Count('id', distinct=True, filter=Q(payment_status='unpaid')),
             )
+            .order_by('-paid_total', '-unpaid_total')
         )
-        .order_by('-paid_total', '-unpaid_total')
-    )
+    except Exception as e:
+        print(f"Error fetching invoice data: {e}")
+        second_chart_data = []
 
-    # Prepare the data for JavaScript, converting Decimal to float
+    # Extract labels and data for the chart
     second_chart_labels = [item['client__name'] for item in second_chart_data]
     second_chart_paid_data = [float(item['paid_total'] or 0) for item in second_chart_data]
     second_chart_unpaid_data = [float(item['unpaid_total'] or 0) for item in second_chart_data]
+    paid_invoices_count = sum(item['paid_count'] for item in second_chart_data)
+    unpaid_invoices_count = sum(item['unpaid_count'] for item in second_chart_data)
+    paid_invoices_amount = sum(float(item['paid_total'] or 0) for item in second_chart_data)
+    unpaid_invoices_amount = sum(float(item['unpaid_total'] or 0) for item in second_chart_data)
 
+    # Structure the data for the chart
     second_chart_json = json.dumps({
         'labels': second_chart_labels,
         'datasets': [
@@ -298,48 +305,72 @@ def get_second_chart_data(year2=None, month2=None):
         ]
     })
 
-    return second_chart_json
+    return {
+        'chart_data': second_chart_json,
+        'paid_invoices_count': paid_invoices_count,
+        'unpaid_invoices_count': unpaid_invoices_count,
+        'paid_invoices_amount': paid_invoices_amount,
+        'unpaid_invoices_amount': unpaid_invoices_amount
+    }
 
-from datetime import datetime
+
 @login_required(login_url='/superadmin/login/')
 def home_view(request):
     form = ReportFilterForm(request.GET or None)
-
-    # If the form is not valid or the year is not provided, set default to 'yearly'
+    
+    # Set default values for year, month, and chart type
+    year = 'yearly'
+    month = None
+    chart_type = 'bar'
+    
+    # Update values if the form is valid
     if form.is_valid():
-        year = form.cleaned_data.get('year') if form.cleaned_data.get('year') else 'yearly'
-        month = form.cleaned_data.get('month') if form.cleaned_data.get('month') else None
-        chart_type = form.cleaned_data.get('chart_type') if form.cleaned_data.get('chart_type') else 'bar'
-    else:
-        year = 'yearly'
-        month = None
-        chart_type = 'bar'
+        year = form.cleaned_data.get('year') or year
+        month = form.cleaned_data.get('month')
+        chart_type = form.cleaned_data.get('chart_type') or chart_type
 
+    # Fetch total counts
     client_count = Client.objects.count()
     employee_count = Employee.objects.count()
     project_count = Project.objects.count()
     task_count = Task.objects.count()
     lead_count = Lead.objects.count()
 
+    # Calculate costs, revenue, and profit
     total_cost, total_company_salary = get_total_cost_and_salary(year, month)
     total_revenue = get_filtered_total_revenue(year, month)
     total_profit = total_revenue - total_cost
 
+    # Generate chart data
     chart_data = generate_chart_data(year, month)
+
+    # Get projects with nearest deadlines
     nearest_deadline_projects = Project.objects.filter(status='inprogress').order_by('deadline')[:3]
+    
+    # Get the latest leads and tasks
     latest_leads = Lead.objects.order_by('-id')[:3]
     last_tasks = Task.objects.order_by('-due_date')[:3]
+
+    # Get the last unpaid invoices
     last_unpaid_invoices = Invoice.objects.filter(payment_status='unpaid').order_by('-invoice_date')[:3]
     
+    # Filters for the second chart
     year2 = request.GET.get('year2')
     month2 = request.GET.get('month2')
-
+    
     # Get the chart data with filters
-    second_chart_json = get_second_chart_data(year2=year2, month2=month2)
+    second_chart_data = get_second_chart_data(year2=year2, month2=month2)
+    
+    # Extract data from the second chart data
+    second_chart_json = second_chart_data['chart_data']
+    paid_invoices_count = second_chart_data['paid_invoices_count']
+    unpaid_invoices_count = second_chart_data['unpaid_invoices_count']
+    paid_invoices_amount = second_chart_data['paid_invoices_amount']
+    unpaid_invoices_amount = second_chart_data['unpaid_invoices_amount']
 
-
+    # Get current year for year range
     current_year = datetime.now().year
-    years = range(2020, current_year + 1)
+    years = range(2015, current_year + 1)
     months = [
         {'value': 1, 'name': 'January'},
         {'value': 2, 'name': 'February'},
@@ -354,7 +385,7 @@ def home_view(request):
         {'value': 11, 'name': 'November'},
         {'value': 12, 'name': 'December'},
     ]
-    
+
     context = {
         'client_count': client_count,
         'employee_count': employee_count,
@@ -373,13 +404,16 @@ def home_view(request):
         'last_tasks': last_tasks,
         'last_unpaid_invoices': last_unpaid_invoices,
         'second_chart_data': second_chart_json,
+        'paid_invoices_count': paid_invoices_count,
+        'unpaid_invoices_count': unpaid_invoices_count,
+        'paid_invoices_amount': paid_invoices_amount,
+        'unpaid_invoices_amount': unpaid_invoices_amount,
         'year': year,
         'month': month,
         'year2': year2,
         'month2': month2,
-         'years': years,
+        'years': years,
         'months': months,
-        
     }
     return render(request, 'superadmin/dashboard.html', context)
 

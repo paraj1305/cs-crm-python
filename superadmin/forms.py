@@ -4,6 +4,8 @@ from superadmin.models import Superadmin,Client,Employee,Project,ChangeRequest,T
 import re,datetime
 from django.core.exceptions import ValidationError
 from datetime import date
+import calendar
+
 
 class LoginForm(forms.Form):
     email = forms.EmailField(widget=forms.EmailInput(attrs={'placeholder': 'Email', 'class': 'form-control'}))
@@ -184,6 +186,23 @@ class SalarySlipForm(forms.ModelForm):
             'year': forms.Select(choices=SalarySlip.YEAR_CHOICES),
         }
         
+
+    
+    
+    
+class ExpenseForm(forms.ModelForm):
+    class Meta:
+        model = Expense
+        fields = ['category', 'description', 'amount', 'date', 'repeat_monthly']
+        
+        widgets = {
+            'category': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter category'}),
+            'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Enter description', 'rows': 3}),
+            'amount': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter amount'}),
+            'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
+        }
+        
+
 class ReportFilterForm(forms.Form):
     current_year = datetime.datetime.now().year
     YEAR_CHOICES = [('yearly', 'All Year')] + [(year, year) for year in range(2015, current_year + 1)] 
@@ -211,20 +230,15 @@ class ReportFilterForm(forms.Form):
         choices=YEAR_CHOICES,
         required=False,
         label='Year',
-        initial='yearlt'  # Set default year to 'yearly'
+        initial='yearly'  # Set default year to 'yearly'
     )
     month = forms.ChoiceField(choices=MONTH_CHOICES, required=False, label='Month')
-    
-    
-    
-class ExpenseForm(forms.ModelForm):
-    class Meta:
-        model = Expense
-        fields = ['category', 'description', 'amount', 'date', 'repeat_monthly']
-        
-        widgets = {
-            'category': forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter category'}),
-            'description': forms.Textarea(attrs={'class': 'form-control', 'placeholder': 'Enter description', 'rows': 3}),
-            'amount': forms.NumberInput(attrs={'class': 'form-control', 'placeholder': 'Enter amount'}),
-            'date': forms.DateInput(attrs={'class': 'form-control', 'type': 'date'}),
-        }
+
+class ReportFilterForm2(forms.Form):
+    YEAR_CHOICES = [(str(y), str(y)) for y in range(2010, 2025)]
+    MONTH_CHOICES = [(str(i), calendar.month_name[i]) for i in range(1, 13)]
+    CHART_TYPE_CHOICES = [('bar', 'Bar'), ('line', 'Line')]
+
+    year = forms.ChoiceField(choices=YEAR_CHOICES, required=False)
+    month = forms.ChoiceField(choices=MONTH_CHOICES, required=False)
+    chart_type = forms.ChoiceField(choices=CHART_TYPE_CHOICES, required=False)
